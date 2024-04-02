@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=attendance'
+      - 'POSTGRES_USER=admin'
+      - 'POSTGRES_PASSWORD=pass_admin'
+    ports:
+      - '5435:5432'
+    volumes:
+      - './postgres_data:/var/lib/postgresql/data'

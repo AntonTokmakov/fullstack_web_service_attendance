@@ -1,0 +1,15 @@
+spring:
+
+#  datasource:
+#    url: jdbc:postgresql://localhost:5435/attendance
+#    username: entrypoint
+#    password: password
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+
+server:
+  port: 8085
