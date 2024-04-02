@@ -3,59 +3,62 @@ package com.diplom.web_service_attendance.controller;
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.Lesson;
+import com.diplom.web_service_attendance.enumPackage.WeekdayEnum;
 import com.diplom.web_service_attendance.repository.LessonRepository;
-import com.diplom.web_service_attendance.service.LessonAndActualLessonService;
+import com.diplom.web_service_attendance.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.security.InvalidParameterException;
+import java.security.Principal;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+
 @RequestMapping("/lessons")
 public class LessonController {
 
-    private final LessonAndActualLessonService lessonAndActualLessonService;
-
-    int group = 13;
+    private final LessonService lessonService;
 
 
+    @GetMapping("/{requestWeekday}") // надо обработать возможную ошибку
+    public ResponseEntity<List<Lesson>> getLessonGroupAndWeekday(@PathVariable String requestWeekday,
+                                                                 Principal principal){
 
-    @GetMapping("/weekdays")
-    public ResponseEntity<List<ActualLesson>> getLessonGroupAndWeek(@RequestParam("day") int id){
-        // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
-        //group = SecurityContextHolder.getContext().getAuthentication().getName()).getStudyGroup().getId();
-        List<ActualLesson> actualLessonList = null;
+        // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
+        int group = 1;
+        List<Lesson> lessonList = null;
+        WeekdayEnum weekday = null;
+
         try {
-            LocalDate date = LocalDate.of(2024, 2, id);
-            actualLessonList = lessonAndActualLessonService.findActualLessonByDateAndStudy(date, group);
-        } catch (HttpClientErrorException.BadRequest e){
-            ProblemDetail problemDetail = e.getResponseBodyAs(ProblemDetail.class);
-            problemDetail.getProperties().get("errors");
-        } catch (NotFountStudyGroup e) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (DateTimeException e){
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            weekday = WeekdayEnum.valueOf(requestWeekday.toUpperCase());
+        } catch (Exception e){
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(actualLessonList);
+        try {
+            lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday).orElseThrow();
+        } catch (NotFountStudyGroup | InvalidParameterException e){
+            e.getStackTrace();
+        }
+
+        return ResponseEntity.ok(lessonList);
     }
 
-    private final LessonRepository lessonRepository;
 
     @GetMapping("/week2")
     public Lesson getLessonGroupAndWeek2(){
         // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
 
-        int idLesson = 178;
-
-        return lessonRepository.findById((long) idLesson).orElse(null);
+        return null;
     }
 
 

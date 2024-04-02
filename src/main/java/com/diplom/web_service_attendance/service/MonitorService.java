@@ -27,7 +27,7 @@ public class MonitorService {
     public SetPassActualLessonGroupStudy getStudentByStudyGroupToPass(String username, long lessonId) throws NotFountStudyGroup {
 
         WebUser user = userRepository.findByUsername(username).orElseThrow(NotFountStudyGroup::new);
-        StudyGroup studyGroup = studyGroupRepository.findByShortNameLikeIgnoreCase(user.getStudyGroupShortName()).orElse(null);
+        StudyGroup studyGroup = new StudyGroup(); //studyGroupRepository.findByShortNameLikeIgnoreCase(user.getStudyGroupShortName()).orElse(null);
         ActualLesson actualLesson = actualLessonRepository.findById(lessonId).orElse(null);
         List<Student> studentList = studentRepository.findByStudyGroup(studyGroup);
         return SetPassActualLessonGroupStudy.builder()
