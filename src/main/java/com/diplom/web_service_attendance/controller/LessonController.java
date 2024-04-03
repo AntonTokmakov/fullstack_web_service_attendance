@@ -3,54 +3,49 @@ package com.diplom.web_service_attendance.controller;
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.Lesson;
-import com.diplom.web_service_attendance.enumPackage.WeekdayEnum;
-import com.diplom.web_service_attendance.repository.LessonRepository;
-import com.diplom.web_service_attendance.service.LessonService;
+import com.diplom.web_service_attendance.service.ActualLessonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.security.InvalidParameterException;
 import java.security.Principal;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
-
 @RequestMapping("/lessons")
 public class LessonController {
 
-    private final LessonService lessonService;
+    private final ActualLessonService actualLessonService;
 
 
-    @GetMapping("/{requestWeekday}") // надо обработать возможную ошибку
-    public ResponseEntity<List<Lesson>> getLessonGroupAndWeekday(@PathVariable String requestWeekday,
-                                                                 Principal principal){
-
-        // по авторизованному пользоавателю смотрим какая у него группа и выдаем расписание на день
-        int group = 1;
-        List<Lesson> lessonList = null;
-        WeekdayEnum weekday = null;
-
+    @PreAuthorize("hasAuthority('MONITOR')")
+    @GetMapping // надо обработать возможную ошибку
+    public String getLessonGroupAndWeekday(Principal principal,
+                                           Model model){
+        List<ActualLesson> lessonList = null;
+        LocalDate date = LocalDate.now();
+//        String weekday;
+//        try {
+//            weekday = date.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru"));
+//        } catch (Exception e){
+//            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+//        }
         try {
-            weekday = WeekdayEnum.valueOf(requestWeekday.toUpperCase());
-        } catch (Exception e){
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
-        }
-
-        try {
-            lessonList = lessonService.findLessonsGroupAndWeekday(group, weekday).orElseThrow();
+            lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
         } catch (NotFountStudyGroup | InvalidParameterException e){
             e.getStackTrace();
         }
 
-        return ResponseEntity.ok(lessonList);
+        model.addAttribute("actualLessons", lessonList);
+        return "lessons";
     }
 
 

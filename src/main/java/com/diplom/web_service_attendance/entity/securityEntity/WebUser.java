@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WebUser {
+public class WebUser  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -35,7 +35,7 @@ public class WebUser {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "study_group_id")
-    private StudyGroup studyGroupShortName;
+    private StudyGroup studyGroup;
 
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)

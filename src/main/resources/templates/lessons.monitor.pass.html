@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Attendance</title>
+</head>
+
+<body>
+<div class="alert alert-primary mt-3" th:if="${setPassActualLessonGroupStudy.actualLesson()}"> <strong>Дисциплина: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getDiscipline().getShortName()}"></span>
+    <br/> <strong>Пара: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getNumberLesson().getName()}"></span>
+    <br/> <strong>День недели: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getWeekday().getName()}"></span>
+    <br/> <strong>Тип дисциплины: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTypeLesson().getName()}"></span>
+    <br/> <strong>Преподаватель: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getSecondName()}"></span> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getFirstName()}"></span> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getOtchestvo()}"></span> </div>
+<table class="table mt-5" th:if="${setPassActualLessonGroupStudy.studentList() != null}">
+    <thead>
+    <tr>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Монитор</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${setPassActualLessonGroupStudy.studentList()}">
+        <td th:text="${student.getLastName()}"></td>
+        <td th:text="${student.getFirstName()}"></td>
+        <td th:text="${student.getOtchestvo()}"></td>
+        <td> <span th:if="${student.isMonitor()}" class="badge bg-primary">True</span> <span th:if="${!student.isMonitor()}" class="badge bg-secondary">False</span> </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</html>

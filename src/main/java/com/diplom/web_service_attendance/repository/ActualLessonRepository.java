@@ -20,7 +20,7 @@ public interface ActualLessonRepository extends JpaRepository<ActualLesson, Long
             "JOIN al.lesson l " +
             "JOIN l.studyGroupList sg " +
             "WHERE al.date =  :date  AND sg.id = :studyGroup")
-    List<ActualLesson> findActualLessonsByDateAndStudyGroup(@Param("date") LocalDate date, @Param("studyGroup") int studyGroup);
+    List<ActualLesson> findActualLessonsByDateAndStudyGroup(@Param("date") LocalDate date, @Param("studyGroup") Long studyGroup);
 
 //    List<ActualLesson> findByDateAndStudyGroup(LocalDate date, StudyGroup studyGroup);
 

@@ -8,29 +8,39 @@ import com.diplom.web_service_attendance.service.MonitorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.security.InvalidParameterException;
+import java.security.Principal;
 import java.util.List;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
-@RequestMapping("lessons/{requestWeekday}/monitor")
+@RequestMapping("lessons/monitor")
 public class MonitorController {
 
     private final MonitorService monitorService;
 
 
-    @GetMapping("/pass")
-    public SetPassActualLessonGroupStudy getStudentToPass(@RequestParam("lessonId") Long lessonId){
+    @PreAuthorize("hasAuthority('MONITOR')")
+    @GetMapping("/pass/{lessonId}")
+    public String getStudentToPass(@PathVariable("lessonId") Long lessonId,
+                                                          Principal principal,
+                                                          Model model) {
 
-        String username = "anton";
+        String username = principal.getName();
+        SetPassActualLessonGroupStudy pass = null;
         try {
-            return monitorService.getStudentByStudyGroupToPass(username, lessonId);
+            pass = monitorService.getStudentByStudyGroupToPass(username, lessonId);
         } catch (NotFountStudyGroup e) {
             throw new RuntimeException(e);
         }
+        model.addAttribute(pass);
+        return "lessons.monitor.pass";
     }
 
 }

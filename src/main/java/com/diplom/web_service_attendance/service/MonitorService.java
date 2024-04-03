@@ -9,7 +9,7 @@ import com.diplom.web_service_attendance.entity.securityEntity.WebUser;
 import com.diplom.web_service_attendance.repository.ActualLessonRepository;
 import com.diplom.web_service_attendance.repository.StudentRepository;
 import com.diplom.web_service_attendance.repository.StudyGroupRepository;
-import com.diplom.web_service_attendance.repository.security.UserRepository;
+import com.diplom.web_service_attendance.repository.security.WebUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +21,13 @@ public class MonitorService {
 
     private final StudentRepository studentRepository;
     private final ActualLessonRepository actualLessonRepository;
-    private final UserRepository userRepository;
+    private final WebUserRepository userRepository;
     private final StudyGroupRepository studyGroupRepository;
 
     public SetPassActualLessonGroupStudy getStudentByStudyGroupToPass(String username, long lessonId) throws NotFountStudyGroup {
 
         WebUser user = userRepository.findByUsername(username).orElseThrow(NotFountStudyGroup::new);
-        StudyGroup studyGroup = new StudyGroup(); //studyGroupRepository.findByShortNameLikeIgnoreCase(user.getStudyGroupShortName()).orElse(null);
+        StudyGroup studyGroup = user.getStudyGroup();
         ActualLesson actualLesson = actualLessonRepository.findById(lessonId).orElse(null);
         List<Student> studentList = studentRepository.findByStudyGroup(studyGroup);
         return SetPassActualLessonGroupStudy.builder()

@@ -1,6 +1,6 @@
 package com.diplom.web_service_attendance.service.security;
 
-import com.diplom.web_service_attendance.repository.security.UserRepository;
+import com.diplom.web_service_attendance.repository.security.WebUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -15,7 +15,7 @@ import com.diplom.web_service_attendance.entity.securityEntity.Authority;
 @RequiredArgsConstructor
 public class WebUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final WebUserRepository userRepository;
 
     @Override
     @Transactional
