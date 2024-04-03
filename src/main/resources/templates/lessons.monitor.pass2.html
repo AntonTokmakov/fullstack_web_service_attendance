@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Attendance</title>
+</head>
+<body>
+<div class="alert alert-primary mt-3" th:if="${setPassActualLessonGroupStudy.actualLesson()}">
+    <strong>Дисциплина: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getDiscipline().getShortName()}"></span> <br/>
+    <strong>Пара: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getNumberLesson().getName()}"></span> <br/>
+    <strong>День недели: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getWeekday().getName()}"></span> <br/>
+    <strong>Тип дисциплины: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTypeLesson().getName()}"></span> <br/>
+    <strong>Преподаватель: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getSecondName()}"></span> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getFirstName()}"></span> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getOtchestvo()}"></span>
+</div>
+<table class="table mt-5" th:if="${setPassActualLessonGroupStudy.studentList}">
+    <thead>
+    <tr>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Пропуск</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student, studentStat : ${setPassActualLessonGroupStudy.studentList}">
+        <td th:text="${student.lastName}"></td>
+        <td th:text="${student.firstName}"></td>
+        <td th:text="${student.otchestvo}"></td>
+        <td>
+            <input type="checkbox" th:value="${student.id}" th:name="|studentList[${studentStat.index}].isPass|" th:checked="${student.isPass}"/>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<button type="submit" class="btn btn-primary mt-3" th:onclick="submitForm()">Сохранить</button>
+<script th:inline="javascript">
+    function submitForm() {
+        var studentsWithPass = [];
+        var checkboxes = document.getElementsByName('studentsWithPass');
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                studentsWithPass.push(checkboxes[i].value);
+            }
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/pass", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({studentsWithPass: studentsWithPass}));
+    }
+</script>
+</body>
+</html>

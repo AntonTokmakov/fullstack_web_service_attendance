@@ -3,6 +3,7 @@ package com.diplom.web_service_attendance.controller;
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.dto.SetPassActualLessonGroupStudy;
 import com.diplom.web_service_attendance.entity.Lesson;
+import com.diplom.web_service_attendance.entity.Student;
 import com.diplom.web_service_attendance.enumPackage.WeekdayEnum;
 import com.diplom.web_service_attendance.service.MonitorService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.security.InvalidParameterException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,8 +41,21 @@ public class MonitorController {
         } catch (NotFountStudyGroup e) {
             throw new RuntimeException(e);
         }
-        model.addAttribute(pass);
-        return "lessons.monitor.pass";
+
+        model.addAttribute("setPassActualLessonGroupStudy", pass);
+        return "lessons.monitor.pass2";
+    }
+
+    @PreAuthorize("hasAuthority('MONITOR')")
+//    @PostMapping("/pass/{lessonId}")
+    @PostMapping("/pass")
+    public ResponseEntity<String> setPassActualLessonGroupStudy(@RequestBody Set<Long> studentsWithPass) {
+        try {
+            monitorService.setPassActualLessonGroupStudy(studentsWithPass);
+            return ResponseEntity.ok("Успешно обновлено");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при обновлении");
+        }
     }
 
 }

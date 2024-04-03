@@ -1,7 +1,9 @@
 package com.diplom.web_service_attendance.service;
 
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
+import com.diplom.web_service_attendance.dto.PassStudent;
 import com.diplom.web_service_attendance.dto.SetPassActualLessonGroupStudy;
+import com.diplom.web_service_attendance.dto.mapper.StudentMapper;
 import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.Student;
 import com.diplom.web_service_attendance.entity.StudyGroup;
@@ -11,9 +13,11 @@ import com.diplom.web_service_attendance.repository.StudentRepository;
 import com.diplom.web_service_attendance.repository.StudyGroupRepository;
 import com.diplom.web_service_attendance.repository.security.WebUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +33,9 @@ public class MonitorService {
         WebUser user = userRepository.findByUsername(username).orElseThrow(NotFountStudyGroup::new);
         StudyGroup studyGroup = user.getStudyGroup();
         ActualLesson actualLesson = actualLessonRepository.findById(lessonId).orElse(null);
-        List<Student> studentList = studentRepository.findByStudyGroup(studyGroup);
+        // подключил мапер
+        StudentMapper studentMapper = Mappers.getMapper(StudentMapper.class);
+        List<PassStudent> studentList = studentMapper.convertToPassStudentList(studentRepository.findByStudyGroup(studyGroup));
         return SetPassActualLessonGroupStudy.builder()
                 .actualLesson(actualLesson)
                 .studentList(studentList)
@@ -38,5 +44,13 @@ public class MonitorService {
 
     public ActualLesson getActualLessonById(Long lessonId) {
         return actualLessonRepository.findById(lessonId).orElse(null);
+    }
+
+    public void setPassActualLessonGroupStudy(Set<Long> studentsWithPass) {
+        for(Long id : studentsWithPass) {
+            Student student = studentRepository.findById(id).orElse(null);
+
+            System.out.println(student.getFirstName() + "\n");
+        }
     }
 }

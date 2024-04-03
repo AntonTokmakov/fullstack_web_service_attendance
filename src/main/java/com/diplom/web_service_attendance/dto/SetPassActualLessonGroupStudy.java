@@ -8,7 +8,7 @@ import java.util.List;
 
 @Builder
 public record SetPassActualLessonGroupStudy
-        (List<Student> studentList,
+        (List<PassStudent> studentList,
          ActualLesson actualLesson){
 
 }
