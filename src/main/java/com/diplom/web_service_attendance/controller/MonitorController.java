@@ -34,7 +34,7 @@ public class MonitorController {
 
 
     @PreAuthorize("hasAuthority('MONITOR')")
-    @GetMapping("/lessons") // надо обработать возможную ошибку
+    @GetMapping("/lessons")
     public String getLessonGroupAndWeekday(Principal principal,
                                            Model model){
         List<CheckActualLesson> checkActualLessons = new ArrayList<>();

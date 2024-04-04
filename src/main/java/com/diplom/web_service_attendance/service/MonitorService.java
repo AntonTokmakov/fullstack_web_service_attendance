@@ -31,7 +31,6 @@ public class MonitorService {
         WebUser user = userRepository.findByUsername(username).orElseThrow(NotFountStudyGroup::new);
         StudyGroup studyGroup = user.getStudyGroup();
         ActualLesson actualLesson = actualLessonRepository.findById(lessonId).orElse(null);
-        // подключил мапер
         StudentMapper studentMapper = Mappers.getMapper(StudentMapper.class);
         List<PassStudent> studentList = studentMapper.convertToPassStudentList(studentRepository.findByStudyGroup(studyGroup));
         for (PassStudent student : studentList) {

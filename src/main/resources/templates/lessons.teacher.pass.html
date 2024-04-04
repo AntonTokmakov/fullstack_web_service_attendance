@@ -23,7 +23,7 @@
         </span>
     </div>
 
-    <form id="lessonForm" th:action="@{/app/monitor/pass/{id}(id=${setPassActualLessonGroupStudy.actualLesson().id})}" method="post">
+    <form id="lessonForm" th:action="@{/app/teacher/pass/{id}(id=${setPassActualLessonGroupStudy.actualLesson().id})}" method="post">
         <table class="table mt-5" th:if="${setPassActualLessonGroupStudy.studentList}">
             <thead>
             <tr>
@@ -46,7 +46,7 @@
             </tr>
             </tbody>
         </table>
-        <button type="submit" class="btn btn-primary mt-3">Отправить на проверку</button>
+        <button type="submit" class="btn btn-primary mt-3">Подтвердить</button>
         <br>
         <br>
     </form>
