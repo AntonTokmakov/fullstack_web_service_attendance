@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -48,4 +49,12 @@ public class WebUser  {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private List<Authority> authorities;
+
+
+    public void addAuthority(Authority authority) {
+        if (this.authorities == null) {
+            this.authorities = new ArrayList<>();
+        }
+        this.authorities.add(authority);
+    }
 }

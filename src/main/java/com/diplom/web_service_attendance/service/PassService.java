@@ -1,13 +1,7 @@
 package com.diplom.web_service_attendance.service;
 
-import com.diplom.web_service_attendance.entity.ActualLesson;
-import com.diplom.web_service_attendance.entity.Pass;
-import com.diplom.web_service_attendance.entity.StatusPass;
-import com.diplom.web_service_attendance.entity.Student;
-import com.diplom.web_service_attendance.repository.ActualLessonRepository;
-import com.diplom.web_service_attendance.repository.PassRepository;
-import com.diplom.web_service_attendance.repository.StatusPassRepository;
-import com.diplom.web_service_attendance.repository.StudentRepository;
+import com.diplom.web_service_attendance.entity.*;
+import com.diplom.web_service_attendance.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +18,7 @@ public class PassService {
     private final PassRepository passRepository;
     private final ActualLessonRepository actualLessonRepository;
     private final StatusPassRepository statusPassRepository;
+    private final CheckingPassRepository checkingPassRepository;
 
 
     @Transactional
@@ -56,5 +51,27 @@ public class PassService {
 
     public Boolean getExistsPass(Long id) {
         return passRepository.existsByActualLessonId(id);
+    }
+
+    public void setCheckPass(Long lessonId) {
+
+        CheckingPass checkingPass = checkingPassRepository.findByActualLessonId(lessonId);
+
+        if (checkingPass == null) {
+            checkingPassRepository.save(CheckingPass.builder()
+                    .actualLesson(actualLessonRepository.findById(lessonId).orElse(null))
+                    .isChecked(true)
+                    .build());
+        } else {
+            checkingPassRepository.save(checkingPass);
+        }
+    }
+
+    public boolean existsByActualLessonId(Long actualLessonId) {
+        return checkingPassRepository.existsByActualLessonId(actualLessonId);
+    }
+
+    public void deleteByActualLessonId(Long actualLessonId) {
+        checkingPassRepository.deleteByActualLessonId(actualLessonId);
     }
 }
