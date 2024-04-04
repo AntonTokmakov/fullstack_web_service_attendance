@@ -5,6 +5,7 @@ import com.diplom.web_service_attendance.dto.CheckActualLesson;
 import com.diplom.web_service_attendance.dto.SetPassActualLessonGroupStudy;
 import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.StudyGroup;
+import com.diplom.web_service_attendance.repository.CheckingPassRepository;
 import com.diplom.web_service_attendance.service.PassService;
 import com.diplom.web_service_attendance.service.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -75,13 +76,18 @@ public class TeacherController {
     }
 
     @PreAuthorize("hasAuthority('MONITOR')")
-    @PostMapping("/pass/{lessonId}")
-    public String handlePassFormSubmission(@PathVariable("lessonId") Long lessonId,
-                                           @RequestParam(value = "studentList", required = false, defaultValue = "") String[] passStudentId) {
+    @PostMapping("/pass/{actualLessonId}")
+    public String handlePassFormSubmission(@PathVariable("actualLessonId") Long actualLessonId,
+                                           @RequestParam(value = "studentList", required = false, defaultValue = "") String[] passStudentId,
+                                           @RequestParam(value = "editTeacher", required = false, defaultValue = "false") boolean editTeacher) {
 
-
-        List<Long> passStudentIdList = Arrays.stream(passStudentId).map(Long::parseLong).collect(Collectors.toList());
-        passService.savePassActualLesson(lessonId, passStudentIdList);
+        if (editTeacher) {
+            List<Long> passStudentIdList = Arrays.stream(passStudentId).map(Long::parseLong).collect(Collectors.toList());
+            passService.savePassActualLesson(actualLessonId, passStudentIdList);
+            passService.setCheckPass(actualLessonId);
+        } else {
+            passService.setCheckPass(actualLessonId);
+        }
 
         return "redirect:/app/teacher/groups";
     }

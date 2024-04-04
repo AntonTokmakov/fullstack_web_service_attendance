@@ -25,6 +25,7 @@ public class MonitorService {
     private final ActualLessonRepository actualLessonRepository;
     private final WebUserRepository userRepository;
     private final PassRepository passRepository;
+    private final CheckingPassRepository checkingPassRepository;
 
     public SetPassActualLessonGroupStudy getStudentByStudyGroupToPass(String username, long lessonId) throws NotFountStudyGroup {
 
@@ -36,9 +37,11 @@ public class MonitorService {
         for (PassStudent student : studentList) {
             student.setPass(passRepository.existsByActualLessonIdAndStudentId(lessonId, student.getId()));
         }
+        boolean isEdit = !checkingPassRepository.existsByActualLessonId(lessonId);
         return SetPassActualLessonGroupStudy.builder()
                 .actualLesson(actualLesson)
                 .studentList(studentList)
+                .isEdit(isEdit)
                 .build();
     }
 

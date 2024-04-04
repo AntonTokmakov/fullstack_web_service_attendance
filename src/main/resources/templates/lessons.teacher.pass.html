@@ -46,7 +46,11 @@
             </tr>
             </tbody>
         </table>
+        <a class="btn btn-primary mt-3" th:href="@{/app/teacher/pass/{id}(id=${setPassActualLessonGroupStudy.actualLesson().id})}">Отмена</a>
         <button type="submit" class="btn btn-primary mt-3">Подтвердить</button>
+
+        Редактировать самостоятельно?
+        <input type="checkbox" th:value="true" th:name="editTeacher" th:checked="${var2}"/>
         <br>
         <br>
     </form>
