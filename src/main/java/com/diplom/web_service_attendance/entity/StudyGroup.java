@@ -40,6 +40,7 @@ public class StudyGroup {
 
     @ManyToOne
     @JoinColumn(name = "kafedra_id")
+    @JsonIgnore
     private Kafedra kafedra;
 
     @ManyToOne
@@ -49,13 +50,13 @@ public class StudyGroup {
     @NotNull
     private LocalDate yearAdmission;
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "assigning_group_lesson",
-            joinColumns = @JoinColumn(name = "study_group_id"),
-            inverseJoinColumns = @JoinColumn(name = "lesson_id")
-    )
-    private List<Lesson> lessonList;
+//    @JsonIgnore
+//    @ManyToMany
+//    @JoinTable(
+//            name = "assigning_group_lesson",
+//            joinColumns = @JoinColumn(name = "study_group_id"),
+//            inverseJoinColumns = @JoinColumn(name = "lesson_id")
+//    )
+//    private List<Lesson> lessonList;
 
 }

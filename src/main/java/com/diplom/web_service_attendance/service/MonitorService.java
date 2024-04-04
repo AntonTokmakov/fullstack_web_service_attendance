@@ -24,7 +24,7 @@ public class MonitorService {
     private final StudentRepository studentRepository;
     private final ActualLessonRepository actualLessonRepository;
     private final WebUserRepository userRepository;
-    private final StudyGroupRepository studyGroupRepository;
+    private final PassRepository passRepository;
 
     public SetPassActualLessonGroupStudy getStudentByStudyGroupToPass(String username, long lessonId) throws NotFountStudyGroup {
 
@@ -34,6 +34,9 @@ public class MonitorService {
         // подключил мапер
         StudentMapper studentMapper = Mappers.getMapper(StudentMapper.class);
         List<PassStudent> studentList = studentMapper.convertToPassStudentList(studentRepository.findByStudyGroup(studyGroup));
+        for (PassStudent student : studentList) {
+            student.setPass(passRepository.existsByActualLessonIdAndStudentId(lessonId, student.getId()));
+        }
         return SetPassActualLessonGroupStudy.builder()
                 .actualLesson(actualLesson)
                 .studentList(studentList)

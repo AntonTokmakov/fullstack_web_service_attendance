@@ -33,14 +33,15 @@ public class Teacher {
     private String otchestvo;
     @ManyToOne
     @JoinColumn(name = "kafedra_id")
+    @JsonIgnore
     private Kafedra kafedra;
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "appointment_teacher_lesson",
-            joinColumns = @JoinColumn(name = "teacher_id"),
-            inverseJoinColumns = @JoinColumn(name = "lesson_id")
-    )
-    private List<Lesson> lessonList;
+//    @JsonIgnore
+//    @ManyToMany
+//    @JoinTable(
+//            name = "appointment_teacher_lesson",
+//            joinColumns = @JoinColumn(name = "teacher_id"),
+//            inverseJoinColumns = @JoinColumn(name = "lesson_id")
+//    )
+//    private List<Lesson> lessonList;
 }

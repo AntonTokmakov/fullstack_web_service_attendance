@@ -29,6 +29,16 @@ public class PassService {
     @Transactional
     public void savePassActualLesson(Long lessonId, List<Long> passStudentId) {
 
+
+
+        if (passRepository.existsByActualLessonId(lessonId)) {
+            passRepository.deleteByActualLessonId(lessonId);
+        }
+
+        if (passStudentId == null) {
+            return;
+        }
+
         ActualLesson actualLesson = actualLessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Актуальное занятие не найдено"));
         passRepository.deleteAllByStudentIdIn(passStudentId);

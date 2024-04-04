@@ -1,6 +1,7 @@
 package com.diplom.web_service_attendance.controller;
 
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
+import com.diplom.web_service_attendance.dto.CheckActualLesson;
 import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.Lesson;
 import com.diplom.web_service_attendance.repository.PassRepository;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.security.InvalidParameterException;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,18 +34,25 @@ public class LessonController {
     @GetMapping // надо обработать возможную ошибку
     public String getLessonGroupAndWeekday(Principal principal,
                                            Model model){
-        List<ActualLesson> lessonList = null;
+        List<CheckActualLesson> checkActualLessons = new ArrayList<>();
         LocalDate date = LocalDate.now();
         try {
-            lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
-//            for (ActualLesson actualLesson : lessonList) {
-//                passRepository.existsByStudent(actualLesson);
-//            }
+            List<ActualLesson> lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
+
+            checkActualLessons = lessonList.stream()
+                    .map(actualLesson -> CheckActualLesson.builder()
+                            .id(actualLesson.getId())
+                            .lesson(actualLesson.getLesson())
+                            .date(actualLesson.getDate())
+                            .isAttendence(passRepository.existsByActualLessonId(actualLesson.getId()))
+                            .build())
+                    .toList();
+
         } catch (NotFountStudyGroup | InvalidParameterException e){
             e.getStackTrace();
         }
 
-        model.addAttribute("actualLessons", lessonList);
+        model.addAttribute("actualLessons", checkActualLessons);
         return "lessons";
     }
 

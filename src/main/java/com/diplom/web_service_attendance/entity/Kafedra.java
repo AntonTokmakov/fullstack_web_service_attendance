@@ -1,5 +1,6 @@
 package com.diplom.web_service_attendance.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,7 @@ public class Kafedra {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "institute_id")
+    @JsonIgnore
     private Institute institute;
 
     @OneToOne(cascade = CascadeType.ALL)

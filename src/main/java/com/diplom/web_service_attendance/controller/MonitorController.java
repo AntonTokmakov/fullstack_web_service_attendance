@@ -44,7 +44,8 @@ public class MonitorController {
     @PreAuthorize("hasAuthority('MONITOR')")
     @PostMapping("/pass/{lessonId}")
     public String handlePassFormSubmission(@PathVariable("lessonId") Long lessonId,
-                                            @RequestParam("studentList") String[] passStudentId) {
+                                            @RequestParam(value = "studentList", required = false, defaultValue = "") String[] passStudentId) {
+
 
         List<Long> passStudentIdList = Arrays.stream(passStudentId).map(Long::parseLong).collect(Collectors.toList());
         passService.savePassActualLesson(lessonId, passStudentIdList);

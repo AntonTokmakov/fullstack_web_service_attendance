@@ -28,7 +28,7 @@
     <table class="table">
         <thead>
         <tr>
-<!--            <th># Номер</th>-->
+            <th># Номер</th>
             <th>Дисциплина</th>
             <th>Преподаватель</th>
             <th>Группа</th>
@@ -36,9 +36,13 @@
         </thead>
         <tbody th:if="${actualLessons}">
         <tr th:each="lessonEntry : ${actualLessons}" th:onclick="'navigateToUrl(`lessons/monitor/pass/' + ${lessonEntry.id} + '`)'">
-<!--            <td th:text="${lessonEntry.getLesson().getNumberLesson().getName()}"></td>-->
-            <td th:if="${lessonEntry.getLesson().getDiscipline().getId()}"> <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></span>
-                <br /> <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}"></span> </td>
+            <td th:text="${lessonEntry.getLesson().getNumberLesson().getName()}"></td>
+            <td th:if="${lessonEntry.getLesson().getDiscipline().getId()}">
+                <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}" th:styleappend="${lessonEntry.getIsAttendence() ? '' : 'color:red;'}"></span>
+                <br /> <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}"></span>
+            </td>
+<!--            <td th:if="${lessonEntry.getLesson().getDiscipline().getId()}"> <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></span>-->
+<!--                <br /> <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}"></span> </td>-->
             <td>
                 <ul>
                     <li th:each="teacher : ${lessonEntry.getLesson().getTeacherList()}"> <span th:text="${teacher.getSecondName()}"></span> <span th:text="${teacher.getFirstName()}"></span> <span th:text="${teacher.getOtchestvo()}"> </span> </li>
