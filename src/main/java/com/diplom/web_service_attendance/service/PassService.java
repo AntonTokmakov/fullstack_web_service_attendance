@@ -29,8 +29,6 @@ public class PassService {
     @Transactional
     public void savePassActualLesson(Long lessonId, List<Long> passStudentId) {
 
-
-
         if (passRepository.existsByActualLessonId(lessonId)) {
             passRepository.deleteByActualLessonId(lessonId);
         }
@@ -54,5 +52,9 @@ public class PassService {
                     .build());
         }
         passRepository.saveAll(passList);
+    }
+
+    public Boolean getExistsPass(Long id) {
+        return passRepository.existsByActualLessonId(id);
     }
 }
