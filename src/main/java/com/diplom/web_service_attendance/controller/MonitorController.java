@@ -2,23 +2,17 @@ package com.diplom.web_service_attendance.controller;
 
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.dto.SetPassActualLessonGroupStudy;
-import com.diplom.web_service_attendance.entity.Lesson;
-import com.diplom.web_service_attendance.entity.Student;
-import com.diplom.web_service_attendance.enumPackage.WeekdayEnum;
 import com.diplom.web_service_attendance.service.MonitorService;
+import com.diplom.web_service_attendance.service.PassService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-
-import java.security.InvalidParameterException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +20,7 @@ import java.util.Set;
 public class MonitorController {
 
     private final MonitorService monitorService;
+    private final PassService passService;
 
 
     @PreAuthorize("hasAuthority('MONITOR')")
@@ -43,19 +38,19 @@ public class MonitorController {
         }
 
         model.addAttribute("setPassActualLessonGroupStudy", pass);
-        return "lessons.monitor.pass2";
+        return "lessons.monitor.pass3";
     }
 
     @PreAuthorize("hasAuthority('MONITOR')")
-//    @PostMapping("/pass/{lessonId}")
-    @PostMapping("/pass")
-    public ResponseEntity<String> setPassActualLessonGroupStudy(@RequestBody Set<Long> studentsWithPass) {
-        try {
-            monitorService.setPassActualLessonGroupStudy(studentsWithPass);
-            return ResponseEntity.ok("Успешно обновлено");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка при обновлении");
-        }
+    @PostMapping("/pass/{lessonId}")
+    public String handlePassFormSubmission(@PathVariable("lessonId") Long lessonId,
+                                            @RequestParam("studentList") String[] passStudentId) {
+
+        List<Long> passStudentIdList = Arrays.stream(passStudentId).map(Long::parseLong).collect(Collectors.toList());
+        passService.savePassActualLesson(lessonId, passStudentIdList);
+
+        return "redirect:/lessons";
     }
+
 
 }

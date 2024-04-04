@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StatusPassRepository extends JpaRepository<StatusPass, Long> {
+
+    StatusPass findByShortNameIgnoreCase(String statusName);
+
 }

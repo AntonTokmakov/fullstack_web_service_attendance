@@ -3,6 +3,7 @@ package com.diplom.web_service_attendance.controller;
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.Lesson;
+import com.diplom.web_service_attendance.repository.PassRepository;
 import com.diplom.web_service_attendance.service.ActualLessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import java.util.List;
 public class LessonController {
 
     private final ActualLessonService actualLessonService;
-
+    private final PassRepository passRepository;
 
     @PreAuthorize("hasAuthority('MONITOR')")
     @GetMapping // надо обработать возможную ошибку
@@ -32,14 +33,11 @@ public class LessonController {
                                            Model model){
         List<ActualLesson> lessonList = null;
         LocalDate date = LocalDate.now();
-//        String weekday;
-//        try {
-//            weekday = date.getDayOfWeek().getDisplayName(TextStyle.FULL, new Locale("ru"));
-//        } catch (Exception e){
-//            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
-//        }
         try {
             lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
+//            for (ActualLesson actualLesson : lessonList) {
+//                passRepository.existsByStudent(actualLesson);
+//            }
         } catch (NotFountStudyGroup | InvalidParameterException e){
             e.getStackTrace();
         }
@@ -47,15 +45,6 @@ public class LessonController {
         model.addAttribute("actualLessons", lessonList);
         return "lessons";
     }
-
-
-    @GetMapping("/week2")
-    public Lesson getLessonGroupAndWeek2(){
-        // по авторизованному пользоавтелю смотрим какая у него группа и выдаем ему расписания на неделю
-
-        return null;
-    }
-
 
     ////// Обработка исключений
 
@@ -65,6 +54,7 @@ public class LessonController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
                         this.toString()));
+
     }
 
 

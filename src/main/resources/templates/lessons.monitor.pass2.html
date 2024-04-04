@@ -28,26 +28,13 @@
         <td th:text="${student.firstName}"></td>
         <td th:text="${student.otchestvo}"></td>
         <td>
-            <input type="checkbox" th:value="${student.id}" th:name="|studentList[${studentStat.index}].isPass|" th:checked="${student.isPass}"/>
+            <label>
+                <input type="checkbox" th:value="${student.id}" th:name="|studentList[${studentStat.index}].isPass|" th:checked="${student.isPass}"/>
+            </label>
         </td>
     </tr>
     </tbody>
 </table>
-<button type="submit" class="btn btn-primary mt-3" th:onclick="submitForm()">Сохранить</button>
-<script th:inline="javascript">
-    function submitForm() {
-        var studentsWithPass = [];
-        var checkboxes = document.getElementsByName('studentsWithPass');
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                studentsWithPass.push(checkboxes[i].value);
-            }
-        }
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/pass", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({studentsWithPass: studentsWithPass}));
-    }
-</script>
+<button type="submit" class="btn btn-primary mt-3" >Сохранить</button>
 </body>
 </html>

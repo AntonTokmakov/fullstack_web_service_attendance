@@ -19,4 +19,9 @@ INSERT INTO weekday (name) VALUES ('Воскресение');
 INSERT INTO parity_of_week (name) VALUES ('Четная');
 INSERT INTO parity_of_week (name) VALUES ('Нечетная');
 
+INSERT INTO status_pass (short_name, name) VALUES ('УП', 'Уважительная причина');
+INSERT INTO status_pass (short_name, name) VALUES ('П', 'Присутствует');
+INSERT INTO status_pass (short_name, name) VALUES ('Б', 'Болел');
+INSERT INTO status_pass (short_name, name) VALUES ('Н', 'Отсутствует');
+
 

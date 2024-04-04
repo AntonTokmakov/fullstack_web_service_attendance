@@ -21,6 +21,6 @@ public class StatusPass {
     private String name;
     @NotNull
     @Size(min = 2, max = 30)
-    private String short_name;
+    private String shortName;
 
 }

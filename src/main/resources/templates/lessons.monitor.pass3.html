@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Attendance</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="alert alert-primary mt-3" th:if="${setPassActualLessonGroupStudy.actualLesson()}">
+        <strong>Дисциплина: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getDiscipline().getShortName()}"></span> <br/>
+        <strong>Пара: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getNumberLesson().getName()}"></span> <br/>
+        <strong>День недели: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getWeekday().getName()}"></span> <br/>
+        <strong>Тип дисциплины: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTypeLesson().getName()}"></span> <br/>
+
+        <strong>Преподаватели: </strong>
+        <span th:each="teacher : ${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList()}">
+        <span th:text="${teacher.getSecondName()}"></span>
+        <span th:text="${teacher.getFirstName()}"></span>
+        <span th:text="${teacher.getOtchestvo()}"></span>
+        <span th:if="${!teacher.equals(setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().getLast())}">, </span>
+        </span>
+
+        <!--        <strong>Преподаватель: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getSecondName()}"></span>-->
+<!--        <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getFirstName()}"></span>-->
+<!--        <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getOtchestvo()}"></span>-->
+    </div>
+
+    <form id="lessonForm" th:action="@{/lessons/monitor/pass/{id}(id=${setPassActualLessonGroupStudy.actualLesson().id})}" method="post">
+        <table class="table mt-5" th:if="${setPassActualLessonGroupStudy.studentList}">
+            <thead>
+            <tr>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Пропуск</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student, studentStat : ${setPassActualLessonGroupStudy.studentList}">
+                <td th:text="${student.lastName}"></td>
+                <td th:text="${student.firstName}"></td>
+                <td th:text="${student.otchestvo}"></td>
+                <td>
+                    <label>
+                        <input type="checkbox" th:value="${student.id}" th:name="studentList" th:checked="${student.isPass}"/>
+                    </label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
+    </form>
+</div>
+</body>
+</html>
