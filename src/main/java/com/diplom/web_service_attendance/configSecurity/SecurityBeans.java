@@ -18,11 +18,17 @@ public class SecurityBeans {
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
-                                .requestMatchers("/**")
-                                .hasRole("MONITOR"))
+                                .requestMatchers("/error")
+                                .permitAll()
+                                .requestMatchers("/app/monitor/**")
+                                .hasRole("MONITOR")
+                                .requestMatchers("/app/teacher/**")
+                                .hasRole("TEACHER")
+                                .requestMatchers("/app/admin/**")
+                                .hasRole("ADMIN"))
                 .httpBasic(Customizer.withDefaults())
 //                .sessionManagement(sessionManagement -> sessionManagement
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .build();
     }
 

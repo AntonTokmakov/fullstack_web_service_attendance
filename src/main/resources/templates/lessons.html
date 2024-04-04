@@ -17,7 +17,8 @@
 </head>
 
 <body>
-<div class="container mt-5">
+<div th:if="${actualLessons.isEmpty()}" class="no-lessons-message"><h2>Сегодня нет занятий</h2></div>
+<div class="container mt-5" th:if="${not actualLessons.isEmpty()}">
     <h1 class="text-center">Список групп</h1>
     <div class="row">
         <div class="col-md-6">
@@ -35,12 +36,18 @@
         </tr>
         </thead>
         <tbody th:if="${actualLessons}">
-        <tr th:each="lessonEntry : ${actualLessons}" th:onclick="'navigateToUrl(`lessons/monitor/pass/' + ${lessonEntry.id} + '`)'">
+        <tr th:each="lessonEntry : ${actualLessons}" th:onclick="'navigateToUrl(`/app/monitor/pass/' + ${lessonEntry.id} + '`)'">
             <td th:text="${lessonEntry.getLesson().getNumberLesson().getName()}"></td>
             <td th:if="${lessonEntry.getLesson().getDiscipline().getId()}">
                 <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}" th:styleappend="${lessonEntry.getIsAttendence() ? '' : 'color:red;'}"></span>
-                <br /> <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}"></span>
+                <br />
+                <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}" th:styleappend="${lessonEntry.getIsAttendence() ? '' : 'color:red;'}"></span>
             </td>
+<!--            <td th:if="${lessonEntry.getLesson().getDiscipline().getId()}">-->
+<!--                <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}" th:styleappend="${lessonEntry.getIsAttendence() ? '' : 'color:red;'}"></span>-->
+<!--                <br /> <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}"></span>-->
+<!--            </td>-->
+
 <!--            <td th:if="${lessonEntry.getLesson().getDiscipline().getId()}"> <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></span>-->
 <!--                <br /> <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}"></span> </td>-->
             <td>

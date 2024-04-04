@@ -1,6 +1,7 @@
 package com.diplom.web_service_attendance.entity.securityEntity;
 
 import com.diplom.web_service_attendance.entity.StudyGroup;
+import com.diplom.web_service_attendance.entity.Teacher;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -32,10 +33,14 @@ public class WebUser  {
     @Size(min = 3, max = 100)
     private String password;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "study_group_id")
     private StudyGroup studyGroup;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
 
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)

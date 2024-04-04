@@ -27,7 +27,7 @@
 <!--        <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getTeacherList().get(0).getOtchestvo()}"></span>-->
     </div>
 
-    <form id="lessonForm" th:action="@{/lessons/monitor/pass/{id}(id=${setPassActualLessonGroupStudy.actualLesson().id})}" method="post">
+    <form id="lessonForm" th:action="@{/app/monitor/pass/{id}(id=${setPassActualLessonGroupStudy.actualLesson().id})}" method="post">
         <table class="table mt-5" th:if="${setPassActualLessonGroupStudy.studentList}">
             <thead>
             <tr>

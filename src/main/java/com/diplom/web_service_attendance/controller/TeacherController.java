@@ -6,45 +6,43 @@ import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.StudyGroup;
 import com.diplom.web_service_attendance.service.TeacherService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.InvalidParameterException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/teacher")
+@RequestMapping("/app/teacher")
 public class TeacherController {
 
     private final TeacherService teacherService;
 
+    @PreAuthorize("hasAuthority('TEACHER')")
     @GetMapping("/groups")
-    public String getGroups() {
+    public String getGroups(Principal principal,
+                            Model model) {
 
-//        List<StudyGroup> studyGroupList = new ArrayList<>();
-//        LocalDate date = LocalDate.now();
-//        try {
-//            List<ActualLesson> lessonList = teacherService.findActualLessonByDate(date, principal.getName());
-//
-//            checkActualLessons = lessonList.stream()
-//                    .map(actualLesson -> CheckActualLesson.builder()
-//                            .id(actualLesson.getId())
-//                            .lesson(actualLesson.getLesson())
-//                            .date(actualLesson.getDate())
-//                            .isAttendence(passRepository.existsByActualLessonId(actualLesson.getId()))
-//                            .build())
-//                    .toList();
-//
-//        } catch (NotFountStudyGroup | InvalidParameterException e){
-//            e.getStackTrace();
-//        }
-//
-//        model.addAttribute("actualLessons", checkActualLessons);
-        return null;
+        List<StudyGroup> studyGroupList = new ArrayList<>();
+        List<ActualLesson> lessonList = new ArrayList<>();
+        LocalDate date = LocalDate.now();
+        try {
+
+             lessonList = teacherService.findActualLessonByDateAndTeacher(date, principal.getName());
+
+        } catch (InvalidParameterException e){
+            e.getStackTrace();
+        }
+
+        model.addAttribute("studyGroupList", studyGroupList);
+        return "teacher/groups";
     }
 
 }
