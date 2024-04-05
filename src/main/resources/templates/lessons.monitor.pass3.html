@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+<br>
+<p> <a href="/app/monitor/lessons" class="btn btn-primary">Назад</a></p>
 <div class="container">
         <div class="alert alert-primary mt-3" th:if="${setPassActualLessonGroupStudy.actualLesson()}">
             <strong>Дисциплина: </strong> <span th:text="${setPassActualLessonGroupStudy.actualLesson().getLesson().getDiscipline().getShortName()}"></span> <br/>
@@ -46,6 +48,7 @@
             </tr>
             </tbody>
         </table>
+        <a class="btn btn-primary mt-3" th:href="@{/app/monitor/pass/{id}(id=${setPassActualLessonGroupStudy.actualLesson().id})}">Отмена</a>
         <button type="submit" class="btn btn-primary mt-3" th:disabled="${not setPassActualLessonGroupStudy.isEdit}">Отправить на проверку</button>
         <br>
         <br>

@@ -22,6 +22,8 @@ public class SecurityBeans {
                                 .permitAll()
                                 .requestMatchers("/app/monitor/**")
                                 .hasRole("MONITOR")
+                                .requestMatchers("/app/report/**")
+                                .hasRole("MONITOR")
                                 .requestMatchers("/app/teacher/**")
                                 .hasRole("TEACHER")
                                 .requestMatchers("/app/admin/**")

@@ -17,6 +17,8 @@
 </head>
 
 <body>
+<a href="/app/report" class="btn btn-primary">Отчеты</a></a>
+
 <div th:if="${actualLessons.isEmpty()}" class="no-lessons-message"><h2>Сегодня нет занятий</h2></div>
 <div class="container mt-5" th:if="${not actualLessons.isEmpty()}">
     <h1 class="text-center">Список групп</h1>
@@ -61,7 +63,6 @@
         </tbody>
     </table>
 </div>
-<!-- Add Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybB5IXNxFwWQfE7u8Lj+XJHAxKlXiG/8rsrtpb6PEdzD828Ii" crossorigin="anonymous">
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous">
