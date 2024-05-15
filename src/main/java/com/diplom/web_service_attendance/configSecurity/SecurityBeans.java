@@ -26,6 +26,8 @@ public class SecurityBeans {
                                 .hasRole("MONITOR")
                                 .requestMatchers("/app/teacher/**")
                                 .hasRole("TEACHER")
+//                                .requestMatchers("/app/report/**")
+//                                .hasRole("TEACHER")
                                 .requestMatchers("/app/admin/**")
                                 .hasRole("ADMIN"))
                 .httpBasic(Customizer.withDefaults())

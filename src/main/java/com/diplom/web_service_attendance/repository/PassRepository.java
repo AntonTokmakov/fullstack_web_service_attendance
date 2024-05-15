@@ -23,4 +23,8 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
     boolean existsByActualLessonId(Long actualLesson);
 
     boolean existsByActualLessonIdAndStudentId(Long lessonId, Long id);
+
+    List<Pass> findByActualLessonIn(List<ActualLesson> actualLessons);
+    List<Pass> findByActualLesson(ActualLesson actualLessons);
+
 }

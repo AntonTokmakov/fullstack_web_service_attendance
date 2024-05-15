@@ -2,6 +2,8 @@ package com.diplom.web_service_attendance.repository;
 
 import com.diplom.web_service_attendance.entity.ActualLesson;
 import com.diplom.web_service_attendance.entity.Lesson;
+import com.diplom.web_service_attendance.entity.StudyGroup;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,13 +22,23 @@ public interface ActualLessonRepository extends JpaRepository<ActualLesson, Long
             "JOIN al.lesson l " +
             "JOIN l.studyGroupList sg " +
             "WHERE al.date =  :date  AND sg.id = :studyGroup")
-    List<ActualLesson> findActualLessonsByDateAndStudyGroup(@Param("date") LocalDate date, @Param("studyGroup") Long studyGroup);
+    List<ActualLesson> findActualLessonsByDateAndStudyGroup(@Param("date") LocalDate date,
+                                                            @Param("studyGroup") Long studyGroup);
 
     @Query("SELECT al FROM ActualLesson al " +
             "JOIN al.lesson l " +
             "JOIN l.teacherList tl " +
             "WHERE al.date = :date  AND tl.id = :teacherId")
-    List<ActualLesson> findActualLessonsByDateAndTeacherList(@Param("date") LocalDate date, @Param("teacherId") Long teacherId);
+    List<ActualLesson> findActualLessonsByDateAndTeacherList(@Param("date") LocalDate date,
+                                                             @Param("teacherId") Long teacherId);
+
+    @Query("SELECT al FROM ActualLesson al " +
+            "JOIN al.lesson l " +
+            "JOIN l.studyGroupList sg " +
+            "WHERE al.date BETWEEN :startDate AND :endDate AND sg.id = :studyGroupId")
+    List<ActualLesson> findByDateBetweenAndStudyGroup(@Param("startDate") LocalDate startDate,
+                                                      @Param("endDate") LocalDate endDate,
+                                                      @Param("studyGroupId") Long studyGroupId);
 
 
 //    List<ActualLesson> findByDateAndStudyGroup(LocalDate date, StudyGroup studyGroup);

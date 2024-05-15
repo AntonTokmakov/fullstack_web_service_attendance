@@ -17,16 +17,22 @@
                     <label for="username" class="form-label">Логин:</label>
                     <input type="text" class="form-control" id="username" th:field="*{username}" required />
                 </div>
+                <br>
+                <br>
                 <div class="mb-3">
                     <label for="password" class="form-label">Пароль:</label>
                     <input type="password" class="form-control" id="password" th:field="*{password}" required />
                 </div>
+                <br>
+                <br>
                 <div class="mb-3">
                     <label for="studyGroup" class="form-label">Группа:</label>
                     <select class="form-select" id="studyGroup" th:field="*{studyGroup}">
                         <option th:each="group : ${registerMonitor.getStudyGroup()}" th:value="${group.getId()}"  th:text="${group.getShortName()}"></option>
                     </select>
                 </div>
+                <br>
+                <br>
                 <button type="submit" class="btn btn-primary">Создать пользователя</button>
             </form>
         </div>

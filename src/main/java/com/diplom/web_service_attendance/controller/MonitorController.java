@@ -38,7 +38,7 @@ public class MonitorController {
     public String getLessonGroupAndWeekday(Principal principal,
                                            Model model){
         List<CheckActualLesson> checkActualLessons = new ArrayList<>();
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.now();//                             .minusWeeks(5);   //todo - delete minusWeeks
         try {
             List<ActualLesson> lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
 
