@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: 'postgres:latest'
+    image: 'huecker.io/library/postgres:latest'
     environment:
       - 'POSTGRES_DB=attendance'
       - 'POSTGRES_USER=admin'
