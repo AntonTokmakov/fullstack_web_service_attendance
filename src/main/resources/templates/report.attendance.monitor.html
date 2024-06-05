@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Отчет по посещаемости</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0-alpha1/css/bootstrap.min.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1>Отчет по посещаемости</h1>
+
+    <form th:action="@{/app/report/attendance}" method="post">
+        <div class="form-group">
+            <label>Группа:</label>
+<!--            <span th:text="${report.getStudyGroup()}"></span>    -->
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">Начальная дата:</label>
+            <input type="text" id="startDate" name="startDate" class="form-control" th:value="${report.getStartDate()}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">Конечная дата:</label>
+            <input type="text" id="endDate" name="endDate" class="form-control" th:value="${report.getEndDate()}" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Получить отчет</button>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#startDate').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true
+        });
+
+        $('#endDate').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true
+        });
+    });
+</script>
+
+</body>
+</html>

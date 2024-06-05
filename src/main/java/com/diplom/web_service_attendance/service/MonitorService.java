@@ -32,16 +32,23 @@ public class MonitorService {
         WebUser user = userRepository.findByUsername(username).orElseThrow(NotFountStudyGroup::new);
         StudyGroup studyGroup = user.getStudyGroup();
         ActualLesson actualLesson = actualLessonRepository.findById(lessonId).orElse(null);
+        List<Student> studentGroupList = studentRepository.findByStudyGroup(studyGroup);
         StudentMapper studentMapper = Mappers.getMapper(StudentMapper.class);
-        List<PassStudent> studentList = studentMapper.convertToPassStudentList(studentRepository.findByStudyGroup(studyGroup));
-        for (PassStudent student : studentList) {
+        List<PassStudent> studentPassList = studentMapper.convertToPassStudentList(studentGroupList);
+        for (PassStudent student : studentPassList) {
             student.setPass(passRepository.existsByActualLessonIdAndStudentId(lessonId, student.getId()));
         }
+
+        Student monitor = studentGroupList.stream()
+                .filter(Student::isMonitor)
+                .findFirst().orElse(null);
+
         boolean isEdit = !checkingPassRepository.existsByActualLessonId(lessonId);
         return SetPassActualLessonGroupStudy.builder()
                 .actualLesson(actualLesson)
-                .studentList(studentList)
+                .studentList(studentPassList)
                 .isEdit(isEdit)
+                .monitor(monitor)
                 .build();
     }
 

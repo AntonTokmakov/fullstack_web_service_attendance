@@ -4,8 +4,11 @@ import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.dto.CheckActualLesson;
 import com.diplom.web_service_attendance.dto.SetPassActualLessonGroupStudy;
 import com.diplom.web_service_attendance.entity.ActualLesson;
+import com.diplom.web_service_attendance.entity.Lesson;
 import com.diplom.web_service_attendance.entity.StudyGroup;
 import com.diplom.web_service_attendance.repository.CheckingPassRepository;
+import com.diplom.web_service_attendance.repository.LessonRepository;
+import com.diplom.web_service_attendance.repository.TeacherRepository;
 import com.diplom.web_service_attendance.service.PassService;
 import com.diplom.web_service_attendance.service.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +33,18 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final PassService passService;
 
+    private final LessonRepository lessonRepository;
+    private final TeacherRepository teacherRepository;
+
+
     @PreAuthorize("hasAuthority('TEACHER')")
     @GetMapping("/groups")
     public String getGroups(Principal principal,
                             Model model) {
 
         List<CheckActualLesson> checkActualLessons = new ArrayList<>();
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2024, 4, 9); // todo LocalDate.now();
+
         try {
             List<ActualLesson> lessonList = teacherService.findActualLessonByDateAndTeacher(date, principal.getName());
 

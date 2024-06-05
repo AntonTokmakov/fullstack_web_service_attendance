@@ -10,6 +10,7 @@ import java.util.List;
 public record SetPassActualLessonGroupStudy
         (List<PassStudent> studentList,
          ActualLesson actualLesson,
-         boolean isEdit) {
+         boolean isEdit,
+         Student monitor) {
 
 }

@@ -27,6 +27,15 @@ public class ReportService {
     private final WebUserRepository webUserRepository;
     private final StudyGroupRepository studyGroupRepository;
 
+    public List<Object[]> getAttendanceReport(LocalDate startDate, LocalDate endDate, Long studyGroupId) {
+        return passRepository.reportAttendance(startDate, endDate, studyGroupId);
+    }
+
+    public StudyGroup getStudyGroupIdByUserName(String username) {
+        return webUserRepository.findByUsername(username).orElse(null).getStudyGroup();
+    }
+
+
     public Map<Student, Integer> getReportAttendance(String username) {
 
         Long studyGroupId = webUserRepository.findByUsername(username).orElse(null).getStudyGroup().getId();
@@ -64,5 +73,15 @@ public class ReportService {
                 .startDate(LocalDate.now().minusMonths(1).plusDays(1))
                 .endDate(LocalDate.now())
                 .build();
+    }
+
+
+    public Map<Student, Integer> getReportTeacher(String username) {
+
+        Long studyGroupId = webUserRepository.findByUsername(username).orElse(null).getStudyGroup().getId();
+
+        List<ActualLesson> actualLessonList = actualLessonRepository.findByDateBetweenAndStudyGroup(LocalDate.now().minusMonths(1), LocalDate.now(), studyGroupId);
+
+        return countAbsencesByStudents(actualLessonList);
     }
 }

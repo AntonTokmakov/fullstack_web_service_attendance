@@ -22,19 +22,19 @@ public class PassService {
 
 
     @Transactional
-    public void savePassActualLesson(Long lessonId, List<Long> passStudentId) {
+    public void savePassActualLesson(Long actualLessonId, List<Long> passStudentId) {
 
-        if (passRepository.existsByActualLessonId(lessonId)) {
-            passRepository.deleteByActualLessonId(lessonId);
+        if (passRepository.existsByActualLessonId(actualLessonId)) {
+            passRepository.deleteByActualLessonId(actualLessonId);
         }
 
         if (passStudentId == null) {
             return;
         }
 
-        ActualLesson actualLesson = actualLessonRepository.findById(lessonId)
+        ActualLesson actualLesson = actualLessonRepository.findById(actualLessonId)
                 .orElseThrow(() -> new RuntimeException("Актуальное занятие не найдено"));
-        passRepository.deleteAllByStudentIdIn(passStudentId);
+        //passRepository.deleteAllByStudentIdIn(passStudentId);
         List<Student> studentList = studentRepository.findAllById(passStudentId);
         StatusPass statusPass = statusPassRepository.findByShortNameIgnoreCase("Н");
 

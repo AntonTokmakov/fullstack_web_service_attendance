@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по посещаемости</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f8;
+        }
+        .sidebar {
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            padding: 20px;
+        }
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+        }
+        .content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .table thead th {
+            background-color: #007bff;
+            color: white;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/app/monitor/lessons">
+                            Список пар
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/app/report">
+                            Отчеты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            Справки
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            Выйти
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="content">
+                <h2>Отчет по посещаемости</h2>
+                <form method="get" action="/app/report/attendance">
+                    <div class="form-group">
+                        <label for="startDate">Дата начала</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Дата окончания</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Показать отчет</button>
+                </form>
+                <div th:if="${report != null}">
+                    <p>
+                    <h4>Наименование группы: <span th:text="${groupName}"></span></h4>
+                    <h4>Всего пар: <span th:text="${totalLessons}"></span></h4>
+                    </p>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th th:each="header : ${reportHeaders}" th:text="${header}"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="row, iterStat : ${report}">
+                            <td th:text="${iterStat.index + 1}"></td> <!-- Номер строки -->
+                            <td th:text="${row[0]}"></td> <!-- Фамилия -->
+                            <td th:text="${row[1]}"></td> <!-- Имя -->
+                            <td th:text="${row[2]}"></td> <!-- Отчество -->
+                            <td th:text="${row[6]}"></td> <!-- Всего пропусков -->
+                            <td th:text="${row[7]}"></td> <!-- Пропуски по уважительной причине -->
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<!-- Add Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

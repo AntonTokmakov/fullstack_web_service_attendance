@@ -40,7 +40,7 @@
             <td th:if="${actualLesson.getLesson().getDiscipline().getId()}">
                 <span th:text="${actualLesson.getLesson().getDiscipline().getName()}" th:styleappend="${actualLesson.getIsAttendence() ? '' : 'color:red;'}"></span>
                 <br />
-                <span th:text="${actualLesson.getLesson().getDiscipline().getShortName()}" th:styleappend="${actualLesson.getIsAttendence() ? '' : 'color:red;'}"></span>
+                <span th:text="${actualLesson.getLesson().getDiscipline().getName()}" th:styleappend="${actualLesson.getIsAttendence() ? '' : 'color:red;'}"></span>
             </td>
 
             <td>
