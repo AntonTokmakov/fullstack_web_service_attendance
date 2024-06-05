@@ -4,10 +4,13 @@ import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.dto.CheckActualLesson;
 import com.diplom.web_service_attendance.dto.SetPassActualLessonGroupStudy;
 import com.diplom.web_service_attendance.entity.ActualLesson;
+import com.diplom.web_service_attendance.entity.DocumentConfirm;
+import com.diplom.web_service_attendance.entity.StudyGroup;
 import com.diplom.web_service_attendance.repository.PassRepository;
 import com.diplom.web_service_attendance.service.ActualLessonService;
 import com.diplom.web_service_attendance.service.MonitorService;
 import com.diplom.web_service_attendance.service.PassService;
+import com.diplom.web_service_attendance.service.ReferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -31,6 +34,8 @@ public class MonitorController {
     private final PassService passService;
     private final ActualLessonService actualLessonService;
     private final PassRepository passRepository;
+
+    private final ReferenceService referenceService;
 
 
     @PreAuthorize("hasAuthority('MONITOR')")
@@ -89,5 +94,24 @@ public class MonitorController {
         return "redirect:/app/monitor/lessons";
     }
 
+    @GetMapping("/references")
+    public String listReferences(Model model, Principal principal) {
+        StudyGroup studyGroup = referenceService.getStudyGroupIdByUserName(principal.getName());
+        List<DocumentConfirm> references = referenceService.getAllReferences(studyGroup.getId());
+        model.addAttribute("references", references);
+        return "documentList";
+    }
+
+    @GetMapping("/references/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("reference", new DocumentConfirm());
+        return "createDocument";
+    }
+
+    @PostMapping("/references/create")
+    public String createReference(@ModelAttribute DocumentConfirm reference) {
+        referenceService.saveReference(reference);
+        return "redirect:/references";
+    }
 
 }

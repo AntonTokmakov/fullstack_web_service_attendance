@@ -2,14 +2,37 @@ package com.diplom.web_service_attendance.controller;
 
 import com.diplom.web_service_attendance.dto.NewReportStudyGroupAndDate;
 import com.diplom.web_service_attendance.dto.ResponsReportStudyGroupAndDate;
+import com.diplom.web_service_attendance.entity.Student;
 import com.diplom.web_service_attendance.entity.StudyGroup;
 import com.diplom.web_service_attendance.service.ReportService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.diplom.web_service_attendance.service.ReportService;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -21,31 +44,12 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
+    private StudyGroup studyGroupByUserName;
 
     @GetMapping
-    public String getReport() {
+    public String getListReport() {
         return "report";
     }
-
-//    @GetMapping("/attendance")
-//    public String getAttendanceReport(@RequestParam(required = false) LocalDate startDate,
-//                                      @RequestParam(required = false) LocalDate endDate,
-//                                      Principal principal,
-//                                      Model model) {
-//        if (startDate == null) {
-//            startDate = LocalDate.of(2024, 4, 1);  // LocalDate.now().minusMonths(1).plusDays(1);  todo заменить на закоменченое
-//            endDate = LocalDate.now();
-//        }
-//
-//        long studyGroupId = reportService.getStudyGroupIdByUserName(principal.getName());
-//
-//        List<Object[]> report = reportService.getAttendanceReport(startDate, endDate, studyGroupId);
-//        List<String> reportHeaders = Arrays.asList("Фамилия", "Имя", "Отчество", "Дата рождения", "Всего пропусков", "Пропуски по уважительной причине", "Всего пар");
-//
-//        model.addAttribute("reportHeaders", reportHeaders);
-//        model.addAttribute("report", report);
-//        return "attendanceReport";
-//    }
 
     @GetMapping("/attendance")
     public String getAttendanceReport(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -53,7 +57,7 @@ public class ReportController {
                                       @RequestParam(required = false) Long studyGroupId,
                                       Principal principal,
                                       Model model) {
-        StudyGroup studyGroup = reportService.getStudyGroupIdByUserName(principal.getName());
+        studyGroupByUserName = reportService.getStudyGroupIdByUserName(principal.getName());
 
         if (startDate == null) {
             startDate = LocalDate.of(2024, 4, 1);  // LocalDate.now().minusMonths(1).plusDays(1);
@@ -62,61 +66,58 @@ public class ReportController {
             endDate = LocalDate.now();
         }
         if (studyGroupId == null) {
-            studyGroupId = studyGroup.getId();
+            studyGroupId = studyGroupByUserName.getId();
+        }
+
+        List<Object[]> report = reportService.getAttendanceReport(startDate, endDate, studyGroupId);
+        List<String> reportHeaders = Arrays.asList("Фамилия", "Имя", "Отчество", "Всего пропусков", "Пропуски по уважительной причине");
+
+        int totalMissedLessons = 0;
+        int totalRespectMissedStatus = 0;
+
+        for (Object[] row : report) {
+            totalMissedLessons += ((Number) row[6]).intValue();
+            totalRespectMissedStatus += ((Number) row[7]).intValue();
+        }
+
+        model.addAttribute("reportHeaders", reportHeaders);
+        model.addAttribute("report", report);
+        model.addAttribute("groupName", studyGroupByUserName.getShortName());
+        model.addAttribute("totalLessons", report.getFirst()[8].toString());
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("totalMissedLessons", totalMissedLessons);
+        model.addAttribute("totalRespectMissedStatus", totalRespectMissedStatus);
+        model.addAttribute("monitor", reportService.getMonitorName(studyGroupByUserName));
+        return "attendanceReport";
+    }
+
+    @GetMapping("/attendance/download")
+    public ResponseEntity<InputStreamResource> downloadAttendanceReport(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                                                        @RequestParam(required = false) Long studyGroupId) throws IOException {
+        // Получение данных для отчета
+        if (startDate == null) {
+            startDate = LocalDate.of(2024, 4, 1);  // Можно заменить на LocalDate.now().minusMonths(1).plusDays(1);
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+        if (studyGroupId == null) {
+            studyGroupId = studyGroupByUserName.getId();
         }
 
         List<Object[]> report = reportService.getAttendanceReport(startDate, endDate, studyGroupId);
 
-        List<String> reportHeaders = Arrays.asList("Фамилия", "Имя", "Отчество", "Всего пропусков", "Пропуски по уважительной причине");
+        // Создание отчета в формате Excel
+        ByteArrayInputStream in = reportService.createExcelReport(report, startDate, endDate, studyGroupByUserName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=attendance_report.xlsx");
 
-        model.addAttribute("reportHeaders", reportHeaders);
-        model.addAttribute("report", report);
-        model.addAttribute("groupName", studyGroup.getShortName());
-        model.addAttribute("totalLessons", report.getFirst()[8].toString());
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-        return "attendanceReport";
+        // Возвращение файла
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(new InputStreamResource(in));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @PostMapping("/attendance")
-//    public String setAttendanceReport(@RequestParam String startDate,
-//                                      @RequestParam String endDate,
-//                                      @RequestParam Long studyGroupId,
-//                                      Model model) {
-//        List<Object[]> report = reportService.getAttendanceReport(startDate, endDate, studyGroupId);
-//        model.addAttribute("report", report);
-//        return "attendanceReport";
-//    }
-//    @GetMapping("/attendance")
-//    public String getReportAttendance(Model model,
-//                                      Principal principal) {
-//
-//        NewReportStudyGroupAndDate report = reportService.getNewReportStudyGroupAndDate();
-//
-//        model.addAttribute("report", report);
-//        return "report.attendance.monitor";
-//    }
-//
-//    @PostMapping("/attendance")
-//    public String getReportAttendance(@ModelAttribute("report") ResponsReportStudyGroupAndDate report,
-//                                      Principal principal) {
-//
-//        reportService.getReportAttendance(principal.getName());
-//
-//        return "report.attendance.monitor";
-//    }
-
 }

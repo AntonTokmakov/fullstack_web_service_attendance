@@ -70,7 +70,7 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="content">
                 <h2>Отчет по посещаемости</h2>
-                <form method="get" action="/app/report/attendance">
+                <form method="get" action="/report/attendance">
                     <div class="form-group">
                         <label for="startDate">Дата начала</label>
                         <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}">
@@ -79,17 +79,24 @@
                         <label for="endDate">Дата окончания</label>
                         <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}">
                     </div>
+
                     <button type="submit" class="btn btn-primary">Показать отчет</button>
+
+
                 </form>
+
                 <div th:if="${report != null}">
                     <p>
-                    <h4>Наименование группы: <span th:text="${groupName}"></span></h4>
-                    <h4>Всего пар: <span th:text="${totalLessons}"></span></h4>
+                        <h4>Группа: <span th:text="${groupName}"></span></h4>
+                        <h4>Кол-во пар: <span th:text="${totalLessons}"></span></h4>
+                        <h4>Староста: <span th:text="${monitor}"></span></h4>
                     </p>
+                    <a th:href="@{/app/report/attendance/download(startDate=${startDate}, endDate=${endDate}, studyGroupId=${studyGroupId})}" class="btn btn-success mb-3">Скачать отчет</a>
+
                     <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <th>#</th>
+                            <th>№</th>
                             <th th:each="header : ${reportHeaders}" th:text="${header}"></th>
                         </tr>
                         </thead>
@@ -102,6 +109,11 @@
                             <td th:text="${row[6]}"></td> <!-- Всего пропусков -->
                             <td th:text="${row[7]}"></td> <!-- Пропуски по уважительной причине -->
                         </tr>
+                        <tr>
+                            <td colspan="4"><strong>Итого пропусков на группу:</strong></td>
+                            <td th:text="${totalMissedLessons}"></td>
+                            <td th:text="${totalRespectMissedStatus}"></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -109,9 +121,15 @@
         </main>
     </div>
 </div>
+
 <!-- Add Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:inline="javascript">
+    function navigateToUrl(url) {
+        window.location.href = url;
+    }
+</script>
 </body>
 </html>

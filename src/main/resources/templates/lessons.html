@@ -49,6 +49,7 @@
             background-color: #0056b3;
             border-color: #004085;
         }
+
     </style>
 </head>
 <body>
@@ -68,7 +69,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="/app/monitor/references">
                             Справки
                         </a>
                     </li>
@@ -82,32 +83,27 @@
         </nav>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="content">
-                <h2 th:if="${not actualLessons.isEmpty()}">
-                    Пары на <span th:text="${actualLessons[0].getLesson().getWeekday().name}"></span>
-                    (<span th:text="|${#temporals.format(actualLessons[0].getDate(), 'd MMMM')}|"></span>)
-                </h2>
+                    <h2 th:if="${not actualLessons.isEmpty()}">
+                        Пары на <span th:text="${actualLessons[0].getLesson().getWeekday().name}"></span>
+                        (<span th:text="|${#temporals.format(actualLessons[0].getDate(), 'd MMMM')}|"></span>)
+                    </h2> <br>
                 <div th:if="${actualLessons.isEmpty()}">
                     <h2>Сегодня нет занятий</h2>
                 </div>
                 <div th:if="${not actualLessons.isEmpty()}" th:each="lessonEntry : ${actualLessons}">
                     <div class="lesson-card" th:onclick="'navigateToUrl(`/app/monitor/pass/' + ${lessonEntry.id} + '`)'">
-                        <p><h5 th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></h5></p>
-                        <p>
-                            <strong>Номер пары: </strong> <span th:text="${lessonEntry.getLesson().getNumberLesson().getName()}"></span>
-                        </p>
-                        <p>
-                            <strong>Тип пары: </strong> <span th:text="${lessonEntry.getLesson().getTypeLesson().getName()}"></span>
-                        </p>
-                        <p>
-                            <strong>Дисциплина:</strong> <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}" th:styleappend="${lessonEntry.getIsAttendence() ? '' : 'color:red;'}"></span>
-                        </p>
-                        <p>
-                            <strong>Преподаватель:</strong>
-                            <span th:each="teacher : ${lessonEntry.getLesson().getTeacherList()}">
-                                <span th:text="${teacher.getSecondName()}"></span> <span th:text="${teacher.getFirstName()}"></span> <span th:text="${teacher.getOtchestvo()}"></span>
-                                <span th:if="${!teacher.equals(lessonEntry.getLesson().getTeacherList().getLast())}">, </span>
-                            </span>
-                        </p>
+                        <h5 th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></h5>
+                            <div>
+                                <strong>Номер пары: </strong> <span th:text="${lessonEntry.getLesson().getNumberLesson().getName()}"></span><br>
+                                <strong>Тип пары: </strong> <span th:text="${lessonEntry.getLesson().getTypeLesson().getName()}"></span><br>
+                                <strong>Дисциплина:</strong> <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}" th:styleappend="${lessonEntry.getIsAttendence() ? '' : 'color:red;'}"></span><br>
+
+                                <strong>Преподаватель:</strong>
+                                <span th:each="teacher : ${lessonEntry.getLesson().getTeacherList()}">
+                                    <span th:text="${teacher.getSecondName()}"></span> <span th:text="${teacher.getFirstName()}"></span> <span th:text="${teacher.getOtchestvo()}"></span>
+                                    <span th:if="${!teacher.equals(lessonEntry.getLesson().getTeacherList().getLast())}">, </span>
+                                </span>
+                            </div>
                     </div>
                 </div>
             </div>
