@@ -28,5 +28,7 @@ public class DocumentConfirm {
     private Date startDate;
     @NotNull
     private Date endDate;
+    @Size(max = 256)
+    private String description;
 
 }

@@ -35,6 +35,7 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
         .document-card h5 {
             font-weight: bold;
@@ -81,19 +82,30 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="content">
                 <div class="d-flex justify-content-between">
-                    <h2>Справки</h2>
+                    <h2>Справки</h2><br>
                     <a class="btn btn-primary" href="/app/documents/create">Создать справку</a>
                 </div>
                 <div th:if="${documents != null}">
-                    <div th:each="document : ${documents}" class="document-card">
+                    <div th:each="document : ${documents}" class="document-card" th:data-url="'/app/monitor/documents/' + ${document.id}">
                         <h5 th:text="${document.name}"></h5>
-                        <p th:text="|С: ${#temporals.format(document.startDate, 'dd-MM-yyyy')} до: ${#temporals.format(document.endDate, 'dd-MM-yyyy')}|"></p>
+                        Даты действия: <span th:text="| ${#dates.format(document.startDate, 'dd-MM-yyyy')} – ${#dates.format(document.endDate, 'dd-MM-yyyy')}|"></span><br>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const documentCards = document.querySelectorAll('.document-card');
+        documentCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                window.location.href = url;
+            });
+        });
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

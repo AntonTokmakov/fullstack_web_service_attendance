@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Document</title>
+    <link rel="stylesheet" type="text/css" href="path/to/your/css/file.css" />
+</head>
+<body>
+<h1>Update Document</h1>
+
+<form th:action="@{/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="name">Document Name:</label>
+        <input type="text" id="name" th:field="*{name}" />
+    </div>
+
+    <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" th:field="*{startDate}" />
+    </div>
+
+    <div>
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" th:field="*{endDate}" />
+    </div>
+
+    <div>
+        <label for="description">Description:</label>
+        <textarea id="description" th:field="*{description}"></textarea>
+    </div>
+
+    <div>
+        <label for="documentScan">Document Scan:</label>
+        <input type="file" id="documentScan" name="documentScan" />
+    </div>
+
+    <div>
+        <label for="student">Student:</label>
+        <select id="student" name="studentId">
+            <option th:each="student : ${students}" th:value="${student.id}" th:text="${student.firstName + ' ' + student.lastName}"></option>
+        </select>
+    </div>
+
+    <div>
+        <label for="reason">Reason:</label>
+        <select id="reason" name="reasonId">
+            <option th:each="reason : ${reasons}" th:value="${reason.id}" th:text="${reason.name}"></option>
+        </select>
+    </div>
+
+    <div>
+        <button type="submit">Save</button>
+    </div>
+</form>
+</body>
+</html>

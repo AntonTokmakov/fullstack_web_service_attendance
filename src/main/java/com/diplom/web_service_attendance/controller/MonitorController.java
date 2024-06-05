@@ -37,7 +37,6 @@ public class MonitorController {
 
     private final ReferenceService referenceService;
 
-
     @PreAuthorize("hasAuthority('MONITOR')")
     @GetMapping("/lessons")
     public String getLessonGroupAndWeekday(Principal principal,
@@ -94,24 +93,55 @@ public class MonitorController {
         return "redirect:/app/monitor/lessons";
     }
 
-    @GetMapping("/references")
+
+
+
+    @GetMapping("/documents")
     public String listReferences(Model model, Principal principal) {
-        StudyGroup studyGroup = referenceService.getStudyGroupIdByUserName(principal.getName());
-        List<DocumentConfirm> references = referenceService.getAllReferences(studyGroup.getId());
-        model.addAttribute("references", references);
+        StudyGroup studyGroupIdByUserName = referenceService.getStudyGroupIdByUserName(principal.getName());
+        List<DocumentConfirm> references = referenceService.getAllReferences(studyGroupIdByUserName.getId());
+        model.addAttribute("documents", references);
         return "documentList";
     }
 
-    @GetMapping("/references/create")
+    @GetMapping("/documents/create")
     public String showCreateForm(Model model) {
-        model.addAttribute("reference", new DocumentConfirm());
+        model.addAttribute("document", new DocumentConfirm());
         return "createDocument";
     }
 
-    @PostMapping("/references/create")
+    @PostMapping("/documents/create")
     public String createReference(@ModelAttribute DocumentConfirm reference) {
         referenceService.saveReference(reference);
-        return "redirect:/references";
+        return "redirect:/documents";
+    }
+
+    @GetMapping("documents/{id}")
+    public String showUpdateForm(@PathVariable("id") Long id, Model model, Principal principal) {
+        StudyGroup studyGroupIdByUserName = referenceService.getStudyGroupIdByUserName(principal.getName());
+        DocumentConfirm documentConfirm = referenceService.getDocumentConfirmById(id);
+        model.addAttribute("document", documentConfirm);
+        model.addAttribute("students", referenceService.getStudentsByStudyGroupId(studyGroupIdByUserName));
+        model.addAttribute("reasons", referenceService.getAllReasonTypes());
+        return "updateDocument";
+    }
+
+
+// todo работает
+//    @PostMapping("documents/{id}")
+//    public String updateReference(@PathVariable("id") Long id, @ModelAttribute DocumentConfirm reference) {
+//        referenceService.saveReference(reference);
+//        return "redirect:/documents";
+//    }
+
+
+
+
+
+    @GetMapping("documents/delete/{id}")
+    public String deleteReference(@PathVariable("id") Long id) {
+//        referenceService.deleteReference(id);
+        return "redirect:/documents";
     }
 
 }
