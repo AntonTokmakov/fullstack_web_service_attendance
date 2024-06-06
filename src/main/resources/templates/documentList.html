@@ -83,12 +83,12 @@
             <div class="content">
                 <div class="d-flex justify-content-between">
                     <h2>Справки</h2><br>
-                    <a class="btn btn-primary" href="/app/documents/create">Создать справку</a>
+                    <a class="btn btn-primary" href="/app/monitor/documents/create">Создать справку</a>
                 </div>
                 <div th:if="${documents != null}">
                     <div th:each="document : ${documents}" class="document-card" th:data-url="'/app/monitor/documents/' + ${document.id}">
                         <h5 th:text="${document.name}"></h5>
-                        Даты действия: <span th:text="| ${#dates.format(document.startDate, 'dd-MM-yyyy')} – ${#dates.format(document.endDate, 'dd-MM-yyyy')}|"></span><br>
+                        Даты действия: <span th:text="| ${#temporals.format(document.startDate, 'dd-MM-yyyy')} до ${#temporals.format(document.endDate, 'dd-MM-yyyy')}|"></span><br>
                     </div>
                 </div>
             </div>

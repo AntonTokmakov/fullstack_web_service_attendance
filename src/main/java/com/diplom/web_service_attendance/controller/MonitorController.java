@@ -104,47 +104,53 @@ public class MonitorController {
         return "documentList";
     }
 
-    @GetMapping("/documents/create")
-    public String showCreateForm(Model model) {
+    @GetMapping("documents/create")
+    public String showCreateForm(Model model, Principal principal) {
+        StudyGroup studyGroupIdByUserName = documentService.getStudyGroupIdByUserName(principal.getName());
         model.addAttribute("document", new DocumentConfirm());
-        return "createDocument";
+        model.addAttribute("students", documentService.getStudentsByStudyGroupId(studyGroupIdByUserName));
+        model.addAttribute("reasons", documentService.getAllReasonTypes());
+        return "documents.create";
     }
 
     @PostMapping("/documents/create")
-    public String createReference(@ModelAttribute DocumentConfirm reference) {
-        documentService.saveReference(reference);
-        return "redirect:/documents";
+    public String createReference(@ModelAttribute("document") DocumentConfirm document,
+                                  @RequestParam("studentId") Long studentId,
+                                  @RequestParam("reasonId") Long reasonId) {
+        documentService.createDocumentConfirmAndPass(document, studentId, reasonId);
+        return "redirect:/app/monitor/documents";
     }
 
     @GetMapping("documents/{id}")
     public String showUpdateForm(@PathVariable("id") Long id, Model model, Principal principal) {
+
         StudyGroup studyGroupIdByUserName = documentService.getStudyGroupIdByUserName(principal.getName());
         DocumentConfirm documentConfirm = documentService.getDocumentConfirmById(id);
-        System.err.println("aaaaaaaaaaaaa");
+
         Long studentId = documentService.getStudent(documentConfirm.getId()) !=
                 null ? documentService.getStudent(documentConfirm.getId()).getId() : null;
-        System.err.println("ffffffffffffffff");
         Long reasonId = documentService.getReason(documentConfirm.getId()) !=
                 null ? documentService.getReason(documentConfirm.getId()).getId() : null;
-        System.err.println("dddddddddd");
+
         model.addAttribute("document", documentConfirm);
-        System.err.println("document good");
         model.addAttribute("students", documentService.getStudentsByStudyGroupId(studyGroupIdByUserName));
-        System.err.println("students good");
         model.addAttribute("reasons", documentService.getAllReasonTypes());
-        System.err.println("reasons good");
         model.addAttribute("selectedStudentId", studentId);
         model.addAttribute("selectedReasonId", reasonId);
 
         return "updateDocument";
     }
 
-// todo работает
-//    @PostMapping("documents/{id}")
-//    public String updateReference(@PathVariable("id") Long id, @ModelAttribute DocumentConfirm reference) {
-//        referenceService.saveReference(reference);
-//        return "redirect:/documents";
-//    }
+    @PostMapping("documents/{id}")
+    public String updateReference(@PathVariable("id") Long id,
+                                  @ModelAttribute("document") DocumentConfirm document,
+                                  @RequestParam("studentId") Long studentId,
+                                  @RequestParam("reasonId") Long reasonId) {
+
+        documentService.setDocumentConfirmAndPass(document, studentId, reasonId);
+
+        return "redirect:/app/monitor/documents";
+    }
 
 
 

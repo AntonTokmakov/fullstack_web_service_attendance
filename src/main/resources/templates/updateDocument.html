@@ -104,7 +104,7 @@
     <div class="sidebar">
         <h2>СибГИУ</h2>
         <ul>
-            <li><a href="#">Список пар</a></li>
+            <li><a href="/app/monitor/lessons">Список пар</a></li>
             <li><a href="#">Отчеты</a></li>
             <li><a href="#">Справки</a></li>
         </ul>
@@ -112,35 +112,48 @@
     </div>
     <div class="main-content">
         <div class="form-container">
-            <h1>Создание справки</h1>
-            <form th:action="@{/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
+            <h1>Редактирование справки</h1>
+            <form th:action="@{/app/monitor/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name">Название:</label>
+                    <input type="text" id="name" name="name" th:value="${document.getName()}" required />
+                </div>
                 <div class="form-group">
                     <label for="student">Выберите студента:</label>
                     <select id="student" name="studentId">
                         <option th:each="student : ${students}" th:value="${student.id}" th:text="${student.firstName + ' ' + student.lastName}" th:selected="${student.id} == ${selectedStudentId}"></option>
                     </select>
                 </div>
+<!--                <div class="form-group">-->
+<!--                    <label for="documentScan">Справка загружена:</label>-->
+<!--                    <input type="file" id="documentScan" name="documentScan" />-->
+<!--                </div>-->
                 <div class="form-group">
-                    <label for="documentScan">Справка загружена:</label>
-                    <input type="file" id="documentScan" name="documentScan" />
-                </div>
-                <div class="form-group">
-                    <label for="startDate">С:</label>
-                    <input type="date" id="startDate" class="form-control" th:field="*{startDate}" required />
+                    <label for="startDate">Даты действия:</label>
+                    <input type="date" id="startDate" class="form-control" th:value="${document.startDate}" name="startDate" required />
                 </div>
                 <div class="form-group">
                     <label for="endDate">по:</label>
-                    <input type="date" id="endDate" class="form-control" th:field="*{endDate}" />
+                    <input type="date" id="endDate" class="form-control" th:value="${document.getEndDate()}" name="endDate" required />
                 </div>
                 <div class="form-group">
                     <label for="reason">Тип причины:</label>
-                    <select id="reason" name="reasonId">
+                    <select id="reason" name="reasonId" required>
                         <option th:each="reason : ${reasons}" th:value="${reason.id}" th:text="${reason.name}" th:selected="${reason.id == selectedReasonId}"></option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <button type="submit">Загрузить</button>
+                    <label for="description">Описание:</label>
+                    <input type="text" id="description" name="description" th:value="${document.description}" />
                 </div>
+                <div class="mt-3">
+                    <div class="form-group">
+                        <button type="submit">Изменить</button>
+                    </div>
+                    <a class="btn btn-secondary" th:href="@{/app/monitor/documents}">Отмена</a>
+
+                </div>
+
             </form>
         </div>
     </div>

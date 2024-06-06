@@ -1,7 +1,9 @@
 package com.diplom.web_service_attendance.repository;
 
 import com.diplom.web_service_attendance.entity.ActualLesson;
+import com.diplom.web_service_attendance.entity.DocumentConfirm;
 import com.diplom.web_service_attendance.entity.Pass;
+import com.diplom.web_service_attendance.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,6 +30,15 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
     List<Pass> findByActualLessonIn(List<ActualLesson> actualLessons);
     List<Pass> findByActualLesson(ActualLesson actualLessons);
 
+    Pass findByDocumentConfirm(DocumentConfirm documentConfirm);
+
+    @Query(value = """
+        SELECT *
+        FROM pass p
+         JOIN public.actual_lesson al on p.actual_lesson_id = al.actual_lesson_id
+        WHERE student_id = :studentId AND al.date BETWEEN :startDate AND :endDate
+    """, nativeQuery = true)
+    List<Pass> findPassByBetweenDates(long studentId, LocalDate startDate, LocalDate endDate);
 
     @Query(value = """
         SELECT s.last_name, s.first_name, s.otchestvo, s.study_group_id, s.is_monitor, s.student_id,

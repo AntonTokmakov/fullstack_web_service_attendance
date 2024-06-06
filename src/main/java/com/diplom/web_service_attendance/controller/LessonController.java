@@ -22,50 +22,50 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Controller
-@RequiredArgsConstructor
-@RequestMapping("/lessons")
-public class LessonController {
-
-    private final ActualLessonService actualLessonService;
-    private final PassRepository passRepository;
-
-    @PreAuthorize("hasAuthority('MONITOR')")
-    @GetMapping // надо обработать возможную ошибку
-    public String getLessonGroupAndWeekday(Principal principal,
-                                           Model model){
-        List<CheckActualLesson> checkActualLessons = new ArrayList<>();
-        LocalDate date = LocalDate.now();
-        try {
-            List<ActualLesson> lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
-
-            checkActualLessons = lessonList.stream()
-                    .map(actualLesson -> CheckActualLesson.builder()
-                            .id(actualLesson.getId())
-                            .lesson(actualLesson.getLesson())
-                            .date(actualLesson.getDate())
-                            .isAttendence(passRepository.existsByActualLessonId(actualLesson.getId()))
-                            .build())
-                    .toList();
-
-        } catch (NotFountStudyGroup | InvalidParameterException e){
-            e.getStackTrace();
-        }
-
-        model.addAttribute("actualLessons", checkActualLessons);
-        return "lessons";
-    }
-
-    ////// Обработка исключений
-
-    @ExceptionHandler(NotFountStudyGroup.class)
-    public ResponseEntity<ProblemDetail> handleNotFountStudyGroupException(NotFountStudyGroup e){
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
-                        this.toString()));
-
-    }
-
-
-}
+//@Controller
+//@RequiredArgsConstructor
+//@RequestMapping("/lessons")
+//public class LessonController {
+//
+//    private final ActualLessonService actualLessonService;
+//    private final PassRepository passRepository;
+//
+//    @PreAuthorize("hasAuthority('MONITOR')")
+//    @GetMapping // надо обработать возможную ошибку
+//    public String getLessonGroupAndWeekday(Principal principal,
+//                                           Model model){
+//        List<CheckActualLesson> checkActualLessons = new ArrayList<>();
+//        LocalDate date = LocalDate.now();
+//        try {
+//            List<ActualLesson> lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
+//
+//            checkActualLessons = lessonList.stream()
+//                    .map(actualLesson -> CheckActualLesson.builder()
+//                            .id(actualLesson.getId())
+//                            .lesson(actualLesson.getLesson())
+//                            .date(actualLesson.getDate())
+//                            .isAttendence(passRepository.existsByActualLessonId(actualLesson.getId()))
+//                            .build())
+//                    .toList();
+//
+//        } catch (NotFountStudyGroup | InvalidParameterException e){
+//            e.getStackTrace();
+//        }
+//
+//        model.addAttribute("actualLessons", checkActualLessons);
+//        return "lessons";
+//    }
+//
+//    ////// Обработка исключений
+//
+//    @ExceptionHandler(NotFountStudyGroup.class)
+//    public ResponseEntity<ProblemDetail> handleNotFountStudyGroupException(NotFountStudyGroup e){
+//
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                .body(ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,
+//                        this.toString()));
+//
+//    }
+//
+//
+//}
