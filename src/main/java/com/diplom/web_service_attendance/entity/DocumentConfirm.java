@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.net.ssl.SSLSession;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -25,9 +27,9 @@ public class DocumentConfirm {
 
     private byte[] documentScan;
     @NotNull
-    private Date startDate;
+    private LocalDate startDate;
     @NotNull
-    private Date endDate;
+    private LocalDate endDate;
     @Size(max = 256)
     private String description;
 

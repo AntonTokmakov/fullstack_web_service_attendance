@@ -4,53 +4,146 @@
     <meta charset="UTF-8">
     <title>Update Document</title>
     <link rel="stylesheet" type="text/css" href="path/to/your/css/file.css" />
+    <style>
+        /* Добавьте сюда ваши стили или подключите внешний CSS файл */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 20%;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            width: 80%;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .form-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        .form-container h1 {
+            font-size: 24px;
+            color: #333333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333333;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .sidebar h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+        .sidebar ul li a {
+            color: #333333;
+            text-decoration: none;
+        }
+        .sidebar button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .sidebar button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<h1>Update Document</h1>
-
-<form th:action="@{/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
-    <div>
-        <label for="name">Document Name:</label>
-        <input type="text" id="name" th:field="*{name}" />
+<div class="container">
+    <div class="sidebar">
+        <h2>СибГИУ</h2>
+        <ul>
+            <li><a href="#">Список пар</a></li>
+            <li><a href="#">Отчеты</a></li>
+            <li><a href="#">Справки</a></li>
+        </ul>
+        <button onclick="window.location.href='/logout'">Выйти</button>
     </div>
-
-    <div>
-        <label for="startDate">Start Date:</label>
-        <input type="date" id="startDate" th:field="*{startDate}" />
+    <div class="main-content">
+        <div class="form-container">
+            <h1>Создание справки</h1>
+            <form th:action="@{/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="student">Выберите студента:</label>
+                    <select id="student" name="studentId">
+                        <option th:each="student : ${students}" th:value="${student.id}" th:text="${student.firstName + ' ' + student.lastName}" th:selected="${student.id} == ${selectedStudentId}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="documentScan">Справка загружена:</label>
+                    <input type="file" id="documentScan" name="documentScan" />
+                </div>
+                <div class="form-group">
+                    <label for="startDate">С:</label>
+                    <input type="date" id="startDate" class="form-control" th:field="*{startDate}" required />
+                </div>
+                <div class="form-group">
+                    <label for="endDate">по:</label>
+                    <input type="date" id="endDate" class="form-control" th:field="*{endDate}" />
+                </div>
+                <div class="form-group">
+                    <label for="reason">Тип причины:</label>
+                    <select id="reason" name="reasonId">
+                        <option th:each="reason : ${reasons}" th:value="${reason.id}" th:text="${reason.name}" th:selected="${reason.id == selectedReasonId}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Загрузить</button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div>
-        <label for="endDate">End Date:</label>
-        <input type="date" id="endDate" th:field="*{endDate}" />
-    </div>
-
-    <div>
-        <label for="description">Description:</label>
-        <textarea id="description" th:field="*{description}"></textarea>
-    </div>
-
-    <div>
-        <label for="documentScan">Document Scan:</label>
-        <input type="file" id="documentScan" name="documentScan" />
-    </div>
-
-    <div>
-        <label for="student">Student:</label>
-        <select id="student" name="studentId">
-            <option th:each="student : ${students}" th:value="${student.id}" th:text="${student.firstName + ' ' + student.lastName}"></option>
-        </select>
-    </div>
-
-    <div>
-        <label for="reason">Reason:</label>
-        <select id="reason" name="reasonId">
-            <option th:each="reason : ${reasons}" th:value="${reason.id}" th:text="${reason.name}"></option>
-        </select>
-    </div>
-
-    <div>
-        <button type="submit">Save</button>
-    </div>
-</form>
+</div>
 </body>
 </html>

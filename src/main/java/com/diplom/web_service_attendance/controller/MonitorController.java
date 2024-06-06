@@ -10,7 +10,7 @@ import com.diplom.web_service_attendance.repository.PassRepository;
 import com.diplom.web_service_attendance.service.ActualLessonService;
 import com.diplom.web_service_attendance.service.MonitorService;
 import com.diplom.web_service_attendance.service.PassService;
-import com.diplom.web_service_attendance.service.ReferenceService;
+import com.diplom.web_service_attendance.service.DocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -35,7 +35,7 @@ public class MonitorController {
     private final ActualLessonService actualLessonService;
     private final PassRepository passRepository;
 
-    private final ReferenceService referenceService;
+    private final DocumentService documentService;
 
     @PreAuthorize("hasAuthority('MONITOR')")
     @GetMapping("/lessons")
@@ -98,8 +98,8 @@ public class MonitorController {
 
     @GetMapping("/documents")
     public String listReferences(Model model, Principal principal) {
-        StudyGroup studyGroupIdByUserName = referenceService.getStudyGroupIdByUserName(principal.getName());
-        List<DocumentConfirm> references = referenceService.getAllReferences(studyGroupIdByUserName.getId());
+        StudyGroup studyGroupIdByUserName = documentService.getStudyGroupIdByUserName(principal.getName());
+        List<DocumentConfirm> references = documentService.getAllReferences(studyGroupIdByUserName.getId());
         model.addAttribute("documents", references);
         return "documentList";
     }
@@ -112,20 +112,32 @@ public class MonitorController {
 
     @PostMapping("/documents/create")
     public String createReference(@ModelAttribute DocumentConfirm reference) {
-        referenceService.saveReference(reference);
+        documentService.saveReference(reference);
         return "redirect:/documents";
     }
 
     @GetMapping("documents/{id}")
     public String showUpdateForm(@PathVariable("id") Long id, Model model, Principal principal) {
-        StudyGroup studyGroupIdByUserName = referenceService.getStudyGroupIdByUserName(principal.getName());
-        DocumentConfirm documentConfirm = referenceService.getDocumentConfirmById(id);
+        StudyGroup studyGroupIdByUserName = documentService.getStudyGroupIdByUserName(principal.getName());
+        DocumentConfirm documentConfirm = documentService.getDocumentConfirmById(id);
+        System.err.println("aaaaaaaaaaaaa");
+        Long studentId = documentService.getStudent(documentConfirm.getId()) !=
+                null ? documentService.getStudent(documentConfirm.getId()).getId() : null;
+        System.err.println("ffffffffffffffff");
+        Long reasonId = documentService.getReason(documentConfirm.getId()) !=
+                null ? documentService.getReason(documentConfirm.getId()).getId() : null;
+        System.err.println("dddddddddd");
         model.addAttribute("document", documentConfirm);
-        model.addAttribute("students", referenceService.getStudentsByStudyGroupId(studyGroupIdByUserName));
-        model.addAttribute("reasons", referenceService.getAllReasonTypes());
+        System.err.println("document good");
+        model.addAttribute("students", documentService.getStudentsByStudyGroupId(studyGroupIdByUserName));
+        System.err.println("students good");
+        model.addAttribute("reasons", documentService.getAllReasonTypes());
+        System.err.println("reasons good");
+        model.addAttribute("selectedStudentId", studentId);
+        model.addAttribute("selectedReasonId", reasonId);
+
         return "updateDocument";
     }
-
 
 // todo работает
 //    @PostMapping("documents/{id}")

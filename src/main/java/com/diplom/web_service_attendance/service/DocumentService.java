@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReferenceService {
+public class DocumentService {
 
     private final WebUserRepository webUserRepository;
     private final DocumentConfirmRepository documentConfirmRepository;
@@ -45,5 +45,13 @@ public class ReferenceService {
 
     public List<StatusPass> getAllReasonTypes() {
         return statusPassRepository.findAll();
+    }
+
+    public Student getStudent(long documentConfirm) {
+        return studentRepository.findByPass(documentConfirm);
+    }
+
+    public StatusPass getReason(long documentConfirm) {
+        return statusPassRepository.findByStatusPass(documentConfirm);
     }
 }
