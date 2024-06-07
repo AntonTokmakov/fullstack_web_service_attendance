@@ -3,9 +3,7 @@ package com.diplom.web_service_attendance.controller;
 import com.diplom.web_service_attendance.Excaption.NotFountStudyGroup;
 import com.diplom.web_service_attendance.dto.CheckActualLesson;
 import com.diplom.web_service_attendance.dto.SetPassActualLessonGroupStudy;
-import com.diplom.web_service_attendance.entity.ActualLesson;
-import com.diplom.web_service_attendance.entity.DocumentConfirm;
-import com.diplom.web_service_attendance.entity.StudyGroup;
+import com.diplom.web_service_attendance.entity.*;
 import com.diplom.web_service_attendance.repository.PassRepository;
 import com.diplom.web_service_attendance.service.ActualLessonService;
 import com.diplom.web_service_attendance.service.MonitorService;
@@ -96,11 +94,13 @@ public class MonitorController {
 
 
 
+
+
     @GetMapping("/documents")
     public String listReferences(Model model, Principal principal) {
         StudyGroup studyGroupIdByUserName = documentService.getStudyGroupIdByUserName(principal.getName());
-        List<DocumentConfirm> references = documentService.getAllReferences(studyGroupIdByUserName.getId());
-        model.addAttribute("documents", references);
+        List<DocumentConfirm> documents = documentService.getAllReferences(studyGroupIdByUserName.getId());
+        model.addAttribute("documents", documents);
         return "documentList";
     }
 
@@ -127,19 +127,34 @@ public class MonitorController {
         StudyGroup studyGroupIdByUserName = documentService.getStudyGroupIdByUserName(principal.getName());
         DocumentConfirm documentConfirm = documentService.getDocumentConfirmById(id);
 
-        Long studentId = documentService.getStudent(documentConfirm.getId()) !=
-                null ? documentService.getStudent(documentConfirm.getId()).getId() : null;
-        Long reasonId = documentService.getReason(documentConfirm.getId()) !=
-                null ? documentService.getReason(documentConfirm.getId()).getId() : null;
+        Student student = documentService.getStudent(documentConfirm.getId());
+        StatusPass reason = documentService.getReason(documentConfirm.getId());
 
         model.addAttribute("document", documentConfirm);
-        model.addAttribute("students", documentService.getStudentsByStudyGroupId(studyGroupIdByUserName));
-        model.addAttribute("reasons", documentService.getAllReasonTypes());
-        model.addAttribute("selectedStudentId", studentId);
-        model.addAttribute("selectedReasonId", reasonId);
+        model.addAttribute("student", student);
+        model.addAttribute("reason", reason);
 
         return "updateDocument";
     }
+//    @GetMapping("documents/{id}")
+//    public String showUpdateForm(@PathVariable("id") Long id, Model model, Principal principal) {
+//
+//        StudyGroup studyGroupIdByUserName = documentService.getStudyGroupIdByUserName(principal.getName());
+//        DocumentConfirm documentConfirm = documentService.getDocumentConfirmById(id);
+//
+//        Long studentId = documentService.getStudent(documentConfirm.getId()) !=
+//                null ? documentService.getStudent(documentConfirm.getId()).getId() : null;
+//        Long reasonId = documentService.getReason(documentConfirm.getId()) !=
+//                null ? documentService.getReason(documentConfirm.getId()).getId() : null;
+//
+//        model.addAttribute("document", documentConfirm);
+//        model.addAttribute("students", documentService.getStudentsByStudyGroupId(studyGroupIdByUserName));
+//        model.addAttribute("reasons", documentService.getAllReasonTypes());
+//        model.addAttribute("selectedStudentId", studentId);
+//        model.addAttribute("selectedReasonId", reasonId);
+//
+//        return "updateDocument";
+//    }
 
     @PostMapping("documents/{id}")
     public String updateReference(@PathVariable("id") Long id,
@@ -152,14 +167,11 @@ public class MonitorController {
         return "redirect:/app/monitor/documents";
     }
 
-
-
-
-
     @GetMapping("documents/delete/{id}")
-    public String deleteReference(@PathVariable("id") Long id) {
-//        referenceService.deleteReference(id);
-        return "redirect:/documents";
+    public String deleteReference(@PathVariable("id") Long idDocument,
+                                  @RequestParam("studentId") Long studentId) {
+        documentService.deleteDocumentConfirmAndPass(idDocument, studentId);
+        return "redirect:/app/monitor/documents";
     }
 
 }

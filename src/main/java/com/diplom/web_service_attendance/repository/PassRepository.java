@@ -33,7 +33,7 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
     Pass findByDocumentConfirm(DocumentConfirm documentConfirm);
 
     @Query(value = """
-        SELECT *
+        SELECT p.*
         FROM pass p
          JOIN public.actual_lesson al on p.actual_lesson_id = al.actual_lesson_id
         WHERE student_id = :studentId AND al.date BETWEEN :startDate AND :endDate

@@ -48,7 +48,7 @@ public interface ActualLessonRepository extends JpaRepository<ActualLesson, Long
                  JOIN public.study_group sg on agl.study_group_id = sg.study_group_id
                  JOIN student s on sg.study_group_id = s.study_group_id
         WHERE al.date BETWEEN :startDate AND :endDate
-          AND s.student_id = :studentId;
+          AND s.student_id = :studentId
     """, nativeQuery = true)
     List<ActualLesson> findActualLessonsByStudent(long studentId, LocalDate startDate, LocalDate endDate);
 

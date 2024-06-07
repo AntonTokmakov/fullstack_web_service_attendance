@@ -4,6 +4,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  mvc:
+    static-path-pattern: /static/**
 
 
 server:

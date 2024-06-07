@@ -24,6 +24,8 @@ public class SecurityBeans {
                                 .hasRole("MONITOR")
                                 .requestMatchers("/app/report/**")
                                 .hasRole("MONITOR")
+                                .requestMatchers("/static/**")
+                                .hasRole("MONITOR")
                                 .requestMatchers("/app/teacher/**")
                                 .hasRole("TEACHER")
 //                                .requestMatchers("/app/report/**")

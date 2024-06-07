@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Update Document</title>
-    <link rel="stylesheet" type="text/css" href="path/to/your/css/file.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Добавьте сюда ваши стили или подключите внешний CSS файл */
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f4f8;
@@ -43,32 +42,17 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
+        .form-group input[disabled], .form-group select[disabled], .form-group textarea[disabled] {
+            background-color: #f9f9f9;
             color: #333333;
+            cursor: not-allowed;
         }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #dddddd;
-            border-radius: 4px;
-        }
-        .form-group button {
-            background-color: #007bff;
+        .form-group .delete-button {
+            background-color: #ff4d4d;
             color: #ffffff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
         }
-        .form-group button:hover {
-            background-color: #0056b3;
+        .form-group .delete-button:hover {
+            background-color: #cc0000;
         }
         .sidebar h2 {
             text-align: center;
@@ -102,7 +86,6 @@
 <body>
 <div class="container">
     <div class="sidebar">
-        <h2>СибГИУ</h2>
         <ul>
             <li><a href="/app/monitor/lessons">Список пар</a></li>
             <li><a href="#">Отчеты</a></li>
@@ -112,48 +95,38 @@
     </div>
     <div class="main-content">
         <div class="form-container">
-            <h1>Редактирование справки</h1>
+            <h1>Информация по справке</h1>
             <form th:action="@{/app/monitor/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="name">Название:</label>
-                    <input type="text" id="name" name="name" th:value="${document.getName()}" required />
+                    <input type="text" id="name" name="name" th:value="${document.name}" required class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="student">Выберите студента:</label>
-                    <select id="student" name="studentId">
-                        <option th:each="student : ${students}" th:value="${student.id}" th:text="${student.firstName + ' ' + student.lastName}" th:selected="${student.id} == ${selectedStudentId}"></option>
-                    </select>
-                </div>
-<!--                <div class="form-group">-->
-<!--                    <label for="documentScan">Справка загружена:</label>-->
-<!--                    <input type="file" id="documentScan" name="documentScan" />-->
-<!--                </div>-->
-                <div class="form-group">
-                    <label for="startDate">Даты действия:</label>
-                    <input type="date" id="startDate" class="form-control" th:value="${document.startDate}" name="startDate" required />
+                    <label for="student">Студент:</label>
+                    <input type="text" id="student" th:value="${student.firstName + ' ' + student.lastName}" disabled class="form-control" />
+                    <input type="hidden" name="studentId" th:value="${student.id}" />
                 </div>
                 <div class="form-group">
-                    <label for="endDate">по:</label>
-                    <input type="date" id="endDate" class="form-control" th:value="${document.getEndDate()}" name="endDate" required />
+                    <label for="startDate">Дата начала:</label>
+                    <input type="date" id="startDate" class="form-control" th:value="${document.startDate}" name="startDate" required disabled />
+                </div>
+                <div class="form-group">
+                    <label for="endDate">Дата окончания:</label>
+                    <input type="date" id="endDate" class="form-control" th:value="${document.endDate}" name="endDate" required disabled />
                 </div>
                 <div class="form-group">
                     <label for="reason">Тип причины:</label>
-                    <select id="reason" name="reasonId" required>
-                        <option th:each="reason : ${reasons}" th:value="${reason.id}" th:text="${reason.name}" th:selected="${reason.id == selectedReasonId}"></option>
-                    </select>
+                    <input type="text" id="reason" th:value="${reason.name}" disabled class="form-control" />
+                    <input type="hidden" name="reasonId" th:value="${reason.id}" />
                 </div>
                 <div class="form-group">
                     <label for="description">Описание:</label>
-                    <input type="text" id="description" name="description" th:value="${document.description}" />
+                    <input type="text" id="description" name="description" th:value="${document.description}" class="form-control" />
                 </div>
-                <div class="mt-3">
-                    <div class="form-group">
-                        <button type="submit">Изменить</button>
-                    </div>
-                    <a class="btn btn-secondary" th:href="@{/app/monitor/documents}">Отмена</a>
-
+                <div class="form-group">
+                    <a th:href="@{'/app/monitor/documents/delete/' + ${document.id} + '?studentId=' + ${student.id}}" class="btn btn-danger">Удалить</a>
                 </div>
-
+                <a class="btn btn-secondary" th:href="@{/app/monitor/documents}">Отмена</a>
             </form>
         </div>
     </div>

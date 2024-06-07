@@ -70,7 +70,7 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="content">
                 <h2>Отчет по посещаемости</h2>
-                <form method="get" action="/report/attendance">
+                <form method="get" action="/app/report/attendance">
                     <div class="form-group">
                         <label for="startDate">Дата начала</label>
                         <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}">
@@ -79,10 +79,7 @@
                         <label for="endDate">Дата окончания</label>
                         <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}">
                     </div>
-
                     <button type="submit" class="btn btn-primary">Показать отчет</button>
-
-
                 </form>
 
                 <div th:if="${report != null}">

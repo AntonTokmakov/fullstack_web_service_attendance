@@ -1,62 +1,119 @@
-<!--<!DOCTYPE html> <html lang="en" xmlns:th="http://www.thymeleaf.org"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Lesson Schedule</title> &lt;!&ndash; Add Bootstrap CSS &ndash;&gt; <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3HV5HzF6Gvk/e3s4Wz6iJgD/+ub2oU" crossorigin="anonymous"> </head> <body> <div class="container mt-5"> <div class="row d-flex justify-content-center"> <div class="col-md-6 text-center"> <h1>Список групп</h1> <table class="table table-bordered table-striped mt-5 table-hover table-responsive-md" style="background-color: #e0e6f9; border-radius: 10px; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);"> <thead> <tr> &lt;!&ndash; <th>Дата</th> &ndash;&gt; &lt;!&ndash; <th>Lesson ID</th> &ndash;&gt; <th>Discipline</th> <th>Teachers</th> <th>Study Group</th> </tr> </thead> <tbody th:if="${studyGroupList}"> <tr th:each="lessonEntry : ${studyGroupList}" th:onclick="'navigateToUrl(`lessons/monitor/pass/` + ${lessonEntry.id})'"> &lt;!&ndash; <td th:text="${lessonEntry.getDate()}"></td> &ndash;&gt; &lt;!&ndash; <td th:text="${lessonEntry.getLesson().getId()}"></td> &ndash;&gt; <td th:if="${lessonEntry.getLesson().getDiscipline().getId()}"> <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></span> <br /> <span th:text="${lessonEntry.getLesson().getDiscipline().getShortName()}"></span> </td> <td> <ul> <li th:each="teacher : ${lessonEntry.getLesson().getTeacherList()}"> <span th:text="${teacher.getSecondName()}"></span> <span th:text="${teacher.getFirstName()}"></span> <span th:text="${teacher.getOtchestvo()}"> </span> </li> </ul> </td> <td> <span th:if="${lessonEntry.getLesson().getStudyGroupList()}"> <span th:text="${lessonEntry.getLesson().getStudyGroupList().get(0).getShortName()}"></span> </span> </td> </tr> </tbody> </table> </div> </div> </div> &lt;!&ndash; Add Bootstrap JS &ndash;&gt; <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybB5IXNxFwWQfE7u8Lj+XJHAxKlXiG/8rsrtpb6PEdzD828Ii" crossorigin="anonymous"> </script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"> </script> </body> </html>-->
-
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson Schedule</title>
     <!-- Add Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl7/1L_dstPt3HV5HzF6Gvk/e3s4Wz6iJgD/+ub2oU" crossorigin="anonymous">
-    <script th:inline="javascript">
-        function navigateToUrl(url) {
-            window.location.href = url;
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f8;
         }
-    </script>
+        .sidebar {
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            padding: 20px;
+        }
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+        }
+        .content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .lesson-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .lesson-card h5 {
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+    </style>
 </head>
-
 <body>
-<div th:if="${studyGroupList.isEmpty()}" class="no-lessons-message"><h2>Сегодня нет занятий</h2></div>
-<div class="container mt-5" th:if="${not studyGroupList.isEmpty()}">
-    <h1 class="text-center">Список групп</h1>
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
-            <h2 th:if="${studyGroupList}">  <span th:text="|${#temporals.format(studyGroupList[0].getDate(), 'd MMMM')} |"></span> <br><br>
-                <span th:text="${studyGroupList[0].getLesson().getWeekday().name}"></span> </h2>
-        </div>
-    </div>
-    <table class="table mt-5" th:if="${studyGroupList}">
-        <thead>
-        <tr>
-            <th>Номер пары</th>
-            <th>Дисциплина</th>
-            <th>Группы</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="actualLesson : ${studyGroupList}" th:onclick="'navigateToUrl(`/app/teacher/pass/' + ${actualLesson.id} + '`)'">
-            <td th:text="${actualLesson.lesson.numberLesson.name}"></td>
-            <td th:if="${actualLesson.getLesson().getDiscipline().getId()}">
-                <span th:text="${actualLesson.getLesson().getDiscipline().getName()}" th:styleappend="${actualLesson.getIsAttendence() ? '' : 'color:red;'}"></span>
-                <br />
-                <span th:text="${actualLesson.getLesson().getDiscipline().getName()}" th:styleappend="${actualLesson.getIsAttendence() ? '' : 'color:red;'}"></span>
-            </td>
-
-            <td>
-                <ul>
-                    <li th:each="studyGroup : ${actualLesson.lesson.studyGroupList}" th:text="${studyGroup.shortName}"></li>
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/app/monitor/lessons">
+                            Список пар
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/report">
+                            Отчеты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/monitor/documents">
+                            Справки
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            Выйти
+                        </a>
+                    </li>
                 </ul>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            </div>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="content">
+                <h2 th:if="${not studyGroupList.isEmpty()}">
+                    Пары на <span th:text="${studyGroupList[0].getLesson().getWeekday().name}"></span>
+                    (<span th:text="|${#temporals.format(studyGroupList[0].getDate(), 'd MMMM')}|"></span>)
+                </h2>
+                <div th:if="${studyGroupList.isEmpty()}">
+                    <h2>Сегодня нет занятий</h2>
+                </div>
+                <div th:if="${not studyGroupList.isEmpty()}" th:each="lessonEntry : ${studyGroupList}">
+                    <div class="lesson-card" th:onclick="'navigateToUrl(`/app/teacher/pass/' + ${lessonEntry.id} + '`)'">
+                        <h5 th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></h5>
+                        <div>
+                            <strong>Номер пары: </strong> <span th:text="${lessonEntry.getLesson().getNumberLesson().getName()}"></span><br>
+                            <strong>Дисциплина: </strong> <span th:text="${lessonEntry.getLesson().getDiscipline().getName()}" th:styleappend="${lessonEntry.getIsAttendence() ? '' : 'color:red;'}"></span><br>
+                            <strong>Группы: </strong>
+                            <ul>
+                                <li th:each="studyGroup : ${lessonEntry.lesson.studyGroupList}" th:text="${studyGroup.shortName}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 </div>
-<!-- Add Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybB5IXNxFwWQfE7u8Lj+XJHAxKlXiG/8rsrtpb6PEdzD828Ii" crossorigin="anonymous">
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:inline="javascript">
+    function navigateToUrl(url) {
+        window.location.href = url;
+    }
 </script>
 </body>
-
 </html>

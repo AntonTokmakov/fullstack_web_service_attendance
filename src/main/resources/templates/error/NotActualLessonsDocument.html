@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Ошибка</h1>
+    <p>Нет пар для справки.</p>
+    <p th:text="'Сообщение ошибки: ' + ${errorMessage}"></p>
+    <a class="btn btn-primary" href="/app/monitor/documents">На главную</a>
+</div>
+</body>
+</html>
