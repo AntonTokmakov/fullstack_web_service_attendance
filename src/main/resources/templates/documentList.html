@@ -14,19 +14,62 @@
             border-right: 1px solid #ddd;
             height: 100vh;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 20px;
+            bottom: 20px;
+            left: 20px;
+            width: 220px;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
         }
         .sidebar .nav-link {
             color: #333;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
         }
         .sidebar .nav-link.active {
             color: #007bff;
+            background-color: #e9f5ff;
+        }
+        .sidebar .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: auto;
+        }
+        .sidebar .logout-btn:hover {
+            background-color: #0056b3;
         }
         .content {
             background-color: #fff;
             border-radius: 8px;
             padding: 20px;
             margin-top: 20px;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+        }
+        .content.collapsed {
+            margin-left: 40px;
         }
         .document-card {
             background-color: #fff;
@@ -36,6 +79,10 @@
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .document-card:hover {
+            transform: scale(1.02);
         }
         .document-card h5 {
             font-weight: bold;
@@ -48,54 +95,70 @@
             background-color: #0056b3;
             border-color: #004085;
         }
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
-            <div class="position-sticky">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+            <div>
+                <div class="text-center mb-4">
+                    <img src="/static/images/logoSibGIU.svg" alt="Logo" style="width: 80%;">
+                </div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/app/monitor/lessons">
-                            Список пар
+                        <a class="nav-link" href="/app/monitor/lessons">
+                            <img src="/static/images/houseListLessons.svg" alt="Icon"> Список пар
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/app/report">
-                            Отчеты
+                            <img src="/static/images/otchet.svg" alt="Icon"> Отчеты
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="/app/documents">
-                            Справки
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">
-                            Выйти
+                            <img src="/static/images/document.svg" alt="Icon"> Справки
                         </a>
                     </li>
                 </ul>
             </div>
+            <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
         </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="content">
-                <div class="d-flex justify-content-between">
-                    <h2>Справки</h2><br>
-                    <a class="btn btn-primary" href="/app/monitor/documents/create">Создать справку</a>
-                </div>
-                <div th:if="${documents != null}">
-                    <div th:each="document : ${documents}" class="document-card" th:data-url="'/app/monitor/documents/' + ${document.id}">
-                        <h5 th:text="${document.name}"></h5>
-                        Даты действия: <span th:text="| ${#temporals.format(document.startDate, 'dd-MM-yyyy')} до ${#temporals.format(document.endDate, 'dd-MM-yyyy')}|"></span><br>
-                    </div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content" id="main-content">
+            <div class="d-flex justify-content-between">
+                <h2>Справки</h2>
+                <a class="btn btn-primary" href="/app/monitor/documents/create">Создать справку</a>
+            </div>
+            <div th:if="${documents != null}">
+                <div th:each="document : ${documents}" class="document-card" th:data-url="'/app/monitor/documents/' + ${document.id}">
+                    <h5 th:text="${document.name}"></h5>
+                    Даты действия: <span th:text="| ${#temporals.format(document.startDate, 'dd-MM-yyyy')} до ${#temporals.format(document.endDate, 'dd-MM-yyyy')}|"></span><br>
                 </div>
             </div>
         </main>
     </div>
 </div>
+
 <script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.getElementById('main-content').classList.toggle('collapsed');
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         const documentCards = document.querySelectorAll('.document-card');
         documentCards.forEach(card => {

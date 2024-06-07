@@ -6,130 +6,206 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
             background-color: #f0f4f8;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            display: flex;
-            min-height: 100vh;
         }
         .sidebar {
-            width: 20%;
-            background-color: #ffffff;
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
             padding: 20px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 20px;
+            bottom: 20px;
+            left: 20px;
+            width: 220px;
+            transition: transform 0.3s ease;
         }
-        .main-content {
-            width: 80%;
-            padding: 40px;
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+            background-color: #e9f5ff;
+        }
+        .sidebar .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: auto;
+        }
+        .sidebar .logout-btn:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+        }
+        .content.collapsed {
+            margin-left: 40px;
         }
         .form-container {
-            background-color: #ffffff;
-            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             max-width: 500px;
             width: 100%;
         }
         .form-container h1 {
             font-size: 24px;
-            color: #333333;
+            color: #333;
             margin-bottom: 20px;
             text-align: center;
         }
         .form-group input[disabled], .form-group select[disabled], .form-group textarea[disabled] {
             background-color: #f9f9f9;
-            color: #333333;
+            color: #333;
             cursor: not-allowed;
         }
         .form-group .delete-button {
             background-color: #ff4d4d;
-            color: #ffffff;
+            color: #fff;
         }
         .form-group .delete-button:hover {
             background-color: #cc0000;
         }
-        .sidebar h2 {
-            text-align: center;
-            color: #007bff;
-        }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .sidebar ul li {
-            margin-bottom: 10px;
-        }
-        .sidebar ul li a {
-            color: #333333;
-            text-decoration: none;
-        }
-        .sidebar button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: #ffffff;
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            padding: 10px 15px;
             border: none;
             border-radius: 4px;
-            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            display: inline-block;
+            width: 100%;
         }
-        .sidebar button:hover {
-            background-color: #0056b3;
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="sidebar">
-        <ul>
-            <li><a href="/app/monitor/lessons">Список пар</a></li>
-            <li><a href="#">Отчеты</a></li>
-            <li><a href="#">Справки</a></li>
-        </ul>
-        <button onclick="window.location.href='/logout'">Выйти</button>
-    </div>
-    <div class="main-content">
-        <div class="form-container">
-            <h1>Информация по справке</h1>
-            <form th:action="@{/app/monitor/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="name">Название:</label>
-                    <input type="text" id="name" name="name" th:value="${document.name}" required class="form-control" />
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+            <div>
+                <div class="text-center mb-4">
+                    <img src="/static/images/logoSibGIU.svg" alt="Logo" style="width: 80%;">
                 </div>
-                <div class="form-group">
-                    <label for="student">Студент:</label>
-                    <input type="text" id="student" th:value="${student.firstName + ' ' + student.lastName}" disabled class="form-control" />
-                    <input type="hidden" name="studentId" th:value="${student.id}" />
-                </div>
-                <div class="form-group">
-                    <label for="startDate">Дата начала:</label>
-                    <input type="date" id="startDate" class="form-control" th:value="${document.startDate}" name="startDate" required disabled />
-                </div>
-                <div class="form-group">
-                    <label for="endDate">Дата окончания:</label>
-                    <input type="date" id="endDate" class="form-control" th:value="${document.endDate}" name="endDate" required disabled />
-                </div>
-                <div class="form-group">
-                    <label for="reason">Тип причины:</label>
-                    <input type="text" id="reason" th:value="${reason.name}" disabled class="form-control" />
-                    <input type="hidden" name="reasonId" th:value="${reason.id}" />
-                </div>
-                <div class="form-group">
-                    <label for="description">Описание:</label>
-                    <input type="text" id="description" name="description" th:value="${document.description}" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <a th:href="@{'/app/monitor/documents/delete/' + ${document.id} + '?studentId=' + ${student.id}}" class="btn btn-danger">Удалить</a>
-                </div>
-                <a class="btn btn-secondary" th:href="@{/app/monitor/documents}">Отмена</a>
-            </form>
-        </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/monitor/lessons">
+                            <img src="/static/images/houseListLessons.svg" alt="Icon"> Список пар
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/report">
+                            <img src="/static/images/otchet.svg" alt="Icon"> Отчеты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/app/monitor/documents">
+                            <img src="/static/images/document.svg" alt="Icon"> Справки
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content" id="main-content">
+            <div class="form-container">
+                <h1>Информация по справке</h1>
+                <form th:action="@{/app/monitor/documents/{id}(id=${document.id})}" th:object="${document}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name">Название:</label>
+                        <input type="text" id="name" name="name" th:value="${document.name}" required class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="student">Студент:</label>
+                        <input type="text" id="student" th:value="${student.firstName + ' ' + student.lastName}" disabled class="form-control" />
+                        <input type="hidden" name="studentId" th:value="${student.id}" />
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Дата начала:</label>
+                        <input type="date" id="startDate" class="form-control" th:value="${document.startDate}" name="startDate" required disabled />
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Дата окончания:</label>
+                        <input type="date" id="endDate" class="form-control" th:value="${document.endDate}" name="endDate" required disabled />
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Тип причины:</label>
+                        <input type="text" id="reason" th:value="${reason.name}" disabled class="form-control" />
+                        <input type="hidden" name="reasonId" th:value="${reason.id}" />
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Описание:</label>
+                        <input type="text" id="description" name="description" th:value="${document.description}" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <a th:href="@{'/app/monitor/documents/delete/' + ${document.id} + '?studentId=' + ${student.id}}" class="btn btn-danger">Удалить</a>
+                    </div>
+                    <a class="btn btn-secondary" th:href="@{/app/monitor/documents}">Отмена</a>
+                </form>
+            </div>
+        </main>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:inline="javascript">
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.getElementById('main-content').classList.toggle('collapsed');
+    }
+</script>
 </body>
 </html>

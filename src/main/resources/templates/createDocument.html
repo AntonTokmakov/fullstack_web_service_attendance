@@ -9,41 +9,157 @@
         body {
             background-color: #f0f4f8;
         }
+        .sidebar {
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 20px;
+            bottom: 20px;
+            left: 20px;
+            width: 220px;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+            background-color: #e9f5ff;
+        }
+        .sidebar .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: auto;
+        }
+        .sidebar .logout-btn:hover {
+            background-color: #0056b3;
+        }
         .content {
             background-color: #fff;
             border-radius: 8px;
             padding: 20px;
             margin-top: 20px;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+        }
+        .content.collapsed {
+            margin-left: 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="content">
-        <h2>Создать справку</h2>
-        <form method="post" action="/app/documents/create">
-            <div class="form-group">
-                <label for="name">Название</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+            <div>
+                <div class="text-center mb-4">
+                    <img src="/static/images/logoSibGIU.svg" alt="Logo" style="width: 80%;">
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/app/monitor/lessons">
+                            <img src="/static/images/houseListLessons.svg" alt="Icon"> Список пар
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/report">
+                            <img src="/static/images/otchet.svg" alt="Icon"> Отчеты
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/monitor/documents">
+                            <img src="/static/images/document.svg" alt="Icon"> Справки
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <div class="form-group">
-                <label for="startDate">Дата начала</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" required>
+            <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content" id="main-content">
+            <div>
+                <h2>Создать справку</h2>
+                <form method="post" action="/app/documents/create">
+                    <div class="form-group">
+                        <label for="name">Название</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Дата начала</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Дата окончания</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="documentScan">Скан документа</label>
+                        <input type="file" class="form-control" id="documentScan" name="documentScan">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="endDate">Дата окончания</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" required>
-            </div>
-            <div class="form-group">
-                <label for="documentScan">Скан документа</label>
-                <input type="file" class="form-control" id="documentScan" name="documentScan">
-            </div>
-            <button type="submit" class="btn btn-primary">Создать</button>
-        </form>
+        </main>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script th:inline="javascript">
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.getElementById('main-content').classList.toggle('collapsed');
+    }
+</script>
 </body>
 </html>

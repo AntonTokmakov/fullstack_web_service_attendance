@@ -20,11 +20,11 @@ public class SecurityBeans {
                         authorizeHttpRequests
                                 .requestMatchers("/error")
                                 .permitAll()
+                                .requestMatchers("/static/**")
+                                .permitAll()
                                 .requestMatchers("/app/monitor/**")
                                 .hasRole("MONITOR")
                                 .requestMatchers("/app/report/**")
-                                .hasRole("MONITOR")
-                                .requestMatchers("/static/**")
                                 .hasRole("MONITOR")
                                 .requestMatchers("/app/teacher/**")
                                 .hasRole("TEACHER")

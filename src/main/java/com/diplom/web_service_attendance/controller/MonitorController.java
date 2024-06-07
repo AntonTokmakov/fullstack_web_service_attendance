@@ -79,6 +79,9 @@ public class MonitorController {
         return "lessons.monitor.pass3";
     }
 
+    /*
+    passStudentId - id студента, которому надо поставить пропуск
+    */
     @PreAuthorize("hasAuthority('MONITOR')")
     @PostMapping("/pass/{lessonId}")
     public String handlePassFormSubmission(@PathVariable("lessonId") Long actualLessonId,

@@ -15,19 +15,67 @@
             border-right: 1px solid #ddd;
             height: 100vh;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 20px;
+            bottom: 20px;
+            left: 20px;
+            width: 220px;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
         }
         .sidebar .nav-link {
             color: #333;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .sidebar .nav-link img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
         }
         .sidebar .nav-link.active {
             color: #007bff;
+            background-color: #e9f5ff;
+        }
+        .sidebar .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: auto;
+        }
+        .sidebar .logout-btn:hover {
+            background-color: #0056b3;
+        }
+        .content-wrapper {
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+            width: calc(100% - 280px);
+        }
+        .content-wrapper.collapsed {
+            margin-left: 40px;
+            width: calc(100% - 60px);
         }
         .content {
             background-color: #fff;
             border-radius: 8px;
             padding: 20px;
-            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .table thead th {
             background-color: #007bff;
@@ -36,38 +84,48 @@
         .table tbody tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/app/monitor/lessons">
-                            Список пар
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/app/report">
-                            Отчеты
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            Справки
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">
-                            Выйти
-                        </a>
-                    </li>
-                </ul>
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+            <div class="text-center mb-4">
+                <img src="/static/images/logoSibGIU.svg" alt="Logo" style="width: 80%;">
             </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/app/monitor/lessons">
+                        <img src="/static/images/houseListLessons.svg" alt="Icon"> Список пар
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/app/report">
+                        <img src="/static/images/otchet.svg" alt="Icon"> Отчеты
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/app/monitor/documents">
+                        <img src="/static/images/document.svg" alt="Icon"> Справки
+                    </a>
+                </li>
+            </ul>
+            <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
         </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content-wrapper" id="main-content">
             <div class="content">
                 <h2>Отчет по посещаемости</h2>
                 <form method="get" action="/app/report/attendance">
@@ -83,11 +141,11 @@
                 </form>
 
                 <div th:if="${report != null}">
-                    <p>
+                    <div class="mt-4">
                         <h4>Группа: <span th:text="${groupName}"></span></h4>
                         <h4>Кол-во пар: <span th:text="${totalLessons}"></span></h4>
                         <h4>Староста: <span th:text="${monitor}"></span></h4>
-                    </p>
+                    </div>
                     <a th:href="@{/app/report/attendance/download(startDate=${startDate}, endDate=${endDate}, studyGroupId=${studyGroupId})}" class="btn btn-success mb-3">Скачать отчет</a>
 
                     <table class="table table-bordered">
@@ -119,13 +177,13 @@
     </div>
 </div>
 
-<!-- Add Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script th:inline="javascript">
-    function navigateToUrl(url) {
-        window.location.href = url;
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.getElementById('main-content').classList.toggle('collapsed');
     }
 </script>
 </body>
