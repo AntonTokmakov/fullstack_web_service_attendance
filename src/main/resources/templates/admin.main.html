@@ -2,16 +2,145 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f4f8;
+        }
+        .sidebar {
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 220px;
+            transition: transform 0.3s ease;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .sidebar .nav-link img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+            background-color: #e9f5ff;
+        }
+        .sidebar .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: auto;
+        }
+        .sidebar .logout-btn:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .content.collapsed {
+            margin-left: 40px;
+        }
+        .content h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            margin-bottom: 10px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+            <div>
+                <div class="text-center mb-4">
+                    <img src="/static/images/logoSibGIU.svg" alt="Logo" style="width: 80%;">
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/admin/registerMonitor">
+                            Создать старосту
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/admin/registerTeacher">
+                            Создать преподавателя
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
+        </nav>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content" id="main-content">
+            <h1>Админ панель</h1>
+        </main>
+    </div>
+</div>
 
-<h2>Админ панель</h2>
-
-<a href="/app/admin/registerMonitor" class="btn btn-primary">Создать старосту</a>
-<br>
-<br>
-<a href="/app/admin/registerTeacher" class="btn btn-primary">Создать преподавателя</a>
-
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.getElementById('main-content').classList.toggle('collapsed');
+    }
+</script>
 </body>
 </html>
