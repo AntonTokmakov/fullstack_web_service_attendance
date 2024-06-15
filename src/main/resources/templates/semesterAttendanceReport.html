@@ -161,11 +161,11 @@
         <div class="date-picker">
             <div class="form-group">
                 <label for="startDate">Дата начала</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}" required>
+                <input type="date" class="form-control" id="startDate" name="startDate" th:value="${#temporals.format(startDate, 'yyyy-MM-dd')}" required>
             </div>
             <div class="form-group">
                 <label for="endDate">Дата окончания</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}" required>
+                <input type="date" class="form-control" id="endDate" name="endDate" th:value="${#temporals.format(endDate, 'yyyy-MM-dd')}" required>
             </div>
             <button type="submit" class="btn btn-primary align-self-end">Показать отчет</button>
         </div>
@@ -173,6 +173,8 @@
     <div class="date-info" th:if="${startDate} and ${endDate}">
         <p>Дата начала: <span th:text="${startDate}"></span></p>
         <p>Дата окончания: <span th:text="${endDate}"></span></p>
+        <p>Группа: <span th:text="${groupName}"></span></p>
+        <p>Староста: <span th:text="${monitor}"></span></p>
     </div>
     <table class="table table-bordered table-responsive">
         <thead>

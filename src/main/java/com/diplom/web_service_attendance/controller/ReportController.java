@@ -144,23 +144,33 @@ public class ReportController {
         List<Object[]> report = reportService.getSemesterAttendanceReport(startDate, endDate, studyGroupId);
 
         Map<String, Map<Integer, int[]>> reportData = new LinkedHashMap<>();
+        int totalMissedLessons = 0;
+        int totalRespectMissedStatus = 0;
+
         for (Object[] row : report) {
             String student = row[0] + " " + row[1] + " " + row[2];
             int year = ((Number) row[3]).intValue();
             int month = ((Number) row[4]).intValue();
-            int totalMissedLessons = ((Number) row[5]).intValue();
-            int respectMissedStatus = ((Number) row[6]).intValue();
+            int totalMissedLessonsForMonth = ((Number) row[5]).intValue();
+            int respectMissedStatusForMonth = ((Number) row[6]).intValue();
 
             int monthKey = year * 100 + month;
 
             reportData.putIfAbsent(student, new LinkedHashMap<>());
-            reportData.get(student).put(monthKey, new int[]{totalMissedLessons, respectMissedStatus});
+            reportData.get(student).put(monthKey, new int[]{totalMissedLessonsForMonth, respectMissedStatusForMonth});
+
+            totalMissedLessons += totalMissedLessonsForMonth;
+            totalRespectMissedStatus += respectMissedStatusForMonth;
         }
 
         model.addAttribute("reportData", reportData);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
         model.addAttribute("months", getMonthsBetweenDates(startDate, endDate));
+        model.addAttribute("groupName", studyGroupByUserName.getShortName());
+        model.addAttribute("totalMissedLessons", totalMissedLessons);
+        model.addAttribute("totalRespectMissedStatus", totalRespectMissedStatus);
+        model.addAttribute("monitor", reportService.getMonitorName(studyGroupByUserName));
 
         return "semesterAttendanceReport";
     }
