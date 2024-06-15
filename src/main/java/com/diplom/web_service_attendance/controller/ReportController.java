@@ -124,13 +124,11 @@ public class ReportController {
 
 
     @GetMapping("/semester-attendance")
-    public String getSemesterAttendanceReport(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false) Long studyGroupId,
-            Principal principal,
-            Model model) {
-
+    public String getSemesterAttendanceReport(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                              @RequestParam(required = false) Long studyGroupId,
+                                              Principal principal,
+                                              Model model) {
         studyGroupByUserName = reportService.getStudyGroupIdByUserName(principal.getName());
 
         if (startDate == null) {
@@ -153,8 +151,10 @@ public class ReportController {
             int totalMissedLessons = ((Number) row[5]).intValue();
             int respectMissedStatus = ((Number) row[6]).intValue();
 
+            int monthKey = year * 100 + month;
+
             reportData.putIfAbsent(student, new LinkedHashMap<>());
-            reportData.get(student).put(year * 100 + month, new int[]{totalMissedLessons, respectMissedStatus});
+            reportData.get(student).put(monthKey, new int[]{totalMissedLessons, respectMissedStatus});
         }
 
         model.addAttribute("reportData", reportData);
@@ -174,7 +174,5 @@ public class ReportController {
         }
         return months;
     }
-
-
 
 }
