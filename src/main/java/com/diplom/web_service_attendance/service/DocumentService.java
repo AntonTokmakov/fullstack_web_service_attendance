@@ -121,6 +121,7 @@ public class DocumentService {
         }
 
         passRepository.deleteAll(passListNew);
+        documentConfirmRepository.delete(document);
 
         for (Pass pass : passList) {
             pass.setDocumentConfirm(null);

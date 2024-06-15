@@ -10,6 +10,7 @@ import com.diplom.web_service_attendance.service.MonitorService;
 import com.diplom.web_service_attendance.service.PassService;
 import com.diplom.web_service_attendance.service.DocumentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,10 +38,17 @@ public class MonitorController {
 
     @PreAuthorize("hasAuthority('MONITOR')")
     @GetMapping("/lessons")
-    public String getLessonGroupAndWeekday(Principal principal,
+    public String getLessonGroupAndWeekday(@RequestParam(value = "date", required = false)
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                               LocalDate date,
+                                            Principal principal,
                                            Model model){
+        if (date == null) {
+            date = LocalDate.now();
+        }
+
         List<CheckActualLesson> checkActualLessons = new ArrayList<>();
-        LocalDate date = LocalDate.of(2024, 4, 9); //LocalDate.now();//      todo - delete
+
         try {
             List<ActualLesson> lessonList = actualLessonService.findActualLessonByDateAndStudy(date, principal.getName());
 
@@ -58,19 +66,20 @@ public class MonitorController {
         }
 
         model.addAttribute("actualLessons", checkActualLessons);
+        model.addAttribute("currentDate", date);
         return "lessons";
     }
 
     @PreAuthorize("hasAuthority('MONITOR')")
-    @GetMapping("/pass/{lessonId}")
-    public String getStudentToPass(@PathVariable("lessonId") Long lessonId,
+    @GetMapping("/pass/{actualLlessonId}")
+    public String getStudentToPass(@PathVariable("actualLlessonId") Long actualLlessonId,
                                                           Principal principal,
                                                           Model model) {
 
         String username = principal.getName();
         SetPassActualLessonGroupStudy pass = null;
         try {
-            pass = monitorService.getStudentByStudyGroupToPass(username, lessonId);
+            pass = monitorService.getStudentByStudyGroupToPass(username, actualLlessonId);
         } catch (NotFountStudyGroup e) {
             throw new RuntimeException(e);
         }
@@ -80,7 +89,7 @@ public class MonitorController {
     }
 
     /*
-    passStudentId - id студента, которому надо поставить пропуск
+        passStudentId - id студента, которому надо поставить пропуск
     */
     @PreAuthorize("hasAuthority('MONITOR')")
     @PostMapping("/pass/{lessonId}")

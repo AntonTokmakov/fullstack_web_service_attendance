@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lesson Schedule</title>
-    <!-- Add Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -61,16 +60,36 @@
         .sidebar .logout-btn:hover {
             background-color: #0056b3;
         }
+        .content-wrapper {
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+            padding: 20px;
+            width: calc(100% - 280px);
+        }
+        .content-wrapper.collapsed {
+            margin-left: 40px;
+            width: calc(100% - 60px);
+        }
         .content {
             background-color: #fff;
             border-radius: 8px;
             padding: 20px;
-            margin-top: 20px;
-            margin-left: 260px; /* Adjusted to be closer to the sidebar */
-            transition: margin-left 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .content.collapsed {
-            margin-left: 40px;
+        .navigation-arrows {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .arrow {
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+            margin: 0 20px;
+        }
+        .arrow:hover {
+            color: #007bff;
         }
         .lesson-card {
             background-color: #fff;
@@ -110,6 +129,7 @@
             cursor: pointer;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 </head>
 <body>
 <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
@@ -140,17 +160,22 @@
             </div>
             <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
         </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content" id="main-content">
-            <div>
-                <h2 th:if="${not actualLessons.isEmpty()}">
-                    Пары на <span th:text="${actualLessons[0].getLesson().getWeekday().name}"></span>
-                    (<span th:text="|${#temporals.format(actualLessons[0].getDate(), 'd MMMM')}|"></span>)
-                </h2> <br>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content-wrapper" id="main-content">
+            <div class="content mt-4">
+                <div class="navigation-arrows">
+                    <span class="arrow" id="prev-day">&larr;</span>
+                    <h2>
+                    <a class="arrow" href="/app/monitor/lessons">
+                        <span id="currentDate" th:text="|${#temporals.format(currentDate, 'EEEE, yyyy-MM-d')}|"></span>
+                    </a>
+                    </h2>
+                    <span class="arrow" id="next-day">&rarr;</span>
+                </div>
                 <div th:if="${actualLessons.isEmpty()}">
                     <h2>Сегодня нет занятий</h2>
                 </div>
                 <div th:if="${not actualLessons.isEmpty()}" th:each="lessonEntry : ${actualLessons}">
-                    <div class="lesson-card" th:onclick="'navigateToUrl(`/app/monitor/pass/' + ${lessonEntry.id} + '`)'">
+                    <div class="lesson-card" th:data-url="'/app/monitor/pass/' + ${lessonEntry.id}">
                         <h5 th:text="${lessonEntry.getLesson().getDiscipline().getName()}"></h5>
                         <div>
                             <strong>Номер пары: </strong> <span th:text="${lessonEntry.getLesson().getNumberLesson().getName()}"></span><br>
@@ -183,9 +208,25 @@
     }
 
     document.querySelectorAll('.lesson-card').forEach(card => {
-        card.addEventListener('click', () => {
-            navigateToUrl(card.getAttribute('th:onclick').replace("navigateToUrl('", "").replace("')", ""));
+        card.addEventListener('click', function() {
+            const url = this.getAttribute('data-url');
+            window.location.href = url;
         });
+    });
+
+    function adjustDate(days) {
+        const currentDateText = document.getElementById('currentDate').innerText;
+        const currentDate = moment(currentDateText, 'YYYY-MM-DD');
+        const newDate = currentDate.add(days, 'days').format('YYYY-MM-DD');
+        window.location.href = `/app/monitor/lessons?date=${newDate}`;
+    }
+
+    document.getElementById('prev-day').addEventListener('click', function() {
+        adjustDate(-1);
+    });
+
+    document.getElementById('next-day').addEventListener('click', function() {
+        adjustDate(1);
     });
 </script>
 </body>

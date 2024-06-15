@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,22 +24,42 @@ public class PassService {
     @Transactional
     public void savePassActualLesson(Long actualLessonId, List<Long> passStudentId) {
 
-        if (passRepository.existsByActualLessonId(actualLessonId)) {
-            passRepository.deleteByActualLessonId(actualLessonId);
-        }
-
         if (passStudentId == null) {
             return;
         }
 
         ActualLesson actualLesson = actualLessonRepository.findById(actualLessonId)
                 .orElseThrow(() -> new RuntimeException("Актуальное занятие не найдено"));
-        //passRepository.deleteAllByStudentIdIn(passStudentId);
         List<Student> studentList = studentRepository.findAllById(passStudentId);
+        List<Student> filteredStudentList = new ArrayList<>();
+        if (passRepository.existsByActualLessonId(actualLessonId)) {
+            Pass pass;
+            for (Student student : studentList) {
+                pass = passRepository.findByActualLessonAndStudent(actualLesson, student);
+                if (pass != null && pass.getDocumentConfirm() != null) {
+                    filteredStudentList.add(student);
+                }
+            }
+            passRepository.deleteAllByActualLessonAndStudents(actualLesson, filteredStudentList);   //.deleteByActualLessonId(actualLessonId);
+        }
+//            for (Student student : studentList) {
+//                Pass pass1 = passRepository.findByActualLessonAndStudent(actualLesson, student);
+//
+//            }
+
+//            List<Student> filteredStudentList = studentList.stream()
+//                    .filter(student -> (passRepository.findByActualLessonAndStudent(actualLesson, student) != null
+//                    && passRepository.findByActualLessonAndStudent(actualLesson, student).getDocumentConfirm() != null))
+//                    .collect(Collectors.toList());
+
+
+        studentList.removeAll(filteredStudentList);
+
         StatusPass statusPass = statusPassRepository.findByShortNameIgnoreCase("Н");
 
         List<Pass> passList = new ArrayList<>();
         for (Student student : studentList) {
+
             passList.add(Pass.builder()
                     .actualLesson(actualLesson)
                     .statusPass(statusPass)

@@ -23,6 +23,10 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
     @Query("DELETE FROM Pass p WHERE p.actualLesson.id = :idActualLesson")
     void deleteByActualLessonId(@Param("idActualLesson") Long idActualLesson);
 
+    @Modifying
+    @Query("DELETE FROM Pass p WHERE p.actualLesson = :actualLesson AND p.student NOT IN :students")
+    void deleteAllByActualLessonAndStudents(@Param("actualLesson") ActualLesson actualLesson, @Param("students") List<Student> students);
+
     boolean existsByActualLessonId(Long actualLesson);
 
     boolean existsByActualLessonIdAndStudentId(Long lessonId, Long id);
@@ -31,6 +35,8 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
     List<Pass> findByActualLesson(ActualLesson actualLessons);
 
     Pass findByDocumentConfirm(DocumentConfirm documentConfirm);
+
+    Pass findByActualLessonAndStudent(ActualLesson actualLesson, Student student);
 
     @Query(value = """
         SELECT p.*

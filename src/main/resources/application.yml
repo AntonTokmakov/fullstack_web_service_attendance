@@ -4,6 +4,19 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+#1
+#  datasource:
+#    url: jdbc:postgresql://localhost:5435/attendance
+#    username: admin
+#    password: pass_admin
+
+#2
+#  datasource:
+#    url: jdbc:postgresql://localhost:5436/attendance2
+#    username: admin2
+#    password: pass_admin2
+
   mvc:
     static-path-pattern: /static/**
 

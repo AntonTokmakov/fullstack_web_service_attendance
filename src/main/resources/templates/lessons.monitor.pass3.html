@@ -109,6 +109,13 @@
             padding: 10px;
             cursor: pointer;
         }
+        .document-link {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -161,6 +168,7 @@
                             <thead>
                             <tr>
                                 <th>ФИО</th>
+                                <th></th>
                                 <th>Пропуск</th>
                             </tr>
                             </thead>
@@ -168,11 +176,17 @@
                             <tr th:each="student : ${setPassActualLessonGroupStudy.studentList}">
                                 <td th:text="${student.lastName} + ' ' + ${student.firstName} + ' ' + ${student.otchestvo}"></td>
                                 <td>
-                                    <button type="button" class="btn btn-toggle" th:classappend="${student.isPass} ? 'btn-success' : 'btn-danger'" th:disabled="${not setPassActualLessonGroupStudy.isEdit}" th:data-id="${student.id}" th:data-state="${student.isPass}" onclick="toggleAttendance(this)">
-                                        <span th:text="${student.isPass} ? 'Присутствует' : 'Отсутствует'"></span>
+                                    <span th:if="${student.documentConfirmId != null}">
+                                        <a th:href="@{/app/monitor/documents/{id}(id=${student.documentConfirmId})}" class="document-link">Справка</a>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-toggle" th:classappend="${student.isPass} ? 'btn-danger' : 'btn-success'" th:disabled="${not setPassActualLessonGroupStudy.isEdit}" th:data-id="${student.id}" th:data-state="${student.isPass}" onclick="toggleAttendance(this)">
+                                        <span th:text="${student.isPass} ? 'Отсутствует' : 'Присутствует'"></span>
                                     </button>
                                     <input type="checkbox" th:id="'attendance_' + ${student.id}" th:name="studentList" th:value="${student.id}" th:checked="${student.isPass}" style="display: none;" />
                                 </td>
+
                             </tr>
                             </tbody>
                         </table>
@@ -201,9 +215,9 @@
         const newState = !currentState;
 
         button.setAttribute('data-state', newState);
-        button.querySelector('span').textContent = newState ? 'Присутствует' : 'Отсутствует';
-        button.classList.toggle('btn-success', newState);
-        button.classList.toggle('btn-danger', !newState);
+        button.querySelector('span').textContent = newState ? 'Отсутствует' : 'Присутствует';
+        button.classList.toggle('btn-success', !newState);
+        button.classList.toggle('btn-danger', newState);
 
         const hiddenCheckbox = document.getElementById('attendance_' + button.getAttribute('data-id'));
         hiddenCheckbox.checked = newState;

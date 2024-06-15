@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("schedule/")
+@RequestMapping("/schedule")
 public class FillScheduleController {
 
     private final FillSheduleService sheduleService;

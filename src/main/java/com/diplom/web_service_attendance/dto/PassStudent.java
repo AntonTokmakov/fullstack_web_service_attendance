@@ -1,5 +1,6 @@
 package com.diplom.web_service_attendance.dto;
 
+import com.diplom.web_service_attendance.entity.DocumentConfirm;
 import com.diplom.web_service_attendance.entity.StudyGroup;
 import lombok.Data;
 
@@ -15,5 +16,6 @@ public class PassStudent {
     private Date birthday;
     private StudyGroup studyGroup;
     private boolean pass;
+    private Long documentConfirmId;
 
 }

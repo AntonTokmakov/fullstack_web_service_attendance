@@ -60,7 +60,7 @@ public class ReportController {
         studyGroupByUserName = reportService.getStudyGroupIdByUserName(principal.getName());
 
         if (startDate == null) {
-            startDate = LocalDate.of(2024, 4, 1);  // LocalDate.now().minusMonths(1).plusDays(1);
+            startDate = LocalDate.now().minusMonths(1).plusDays(1);
         }
         if (endDate == null) {
             endDate = LocalDate.now();

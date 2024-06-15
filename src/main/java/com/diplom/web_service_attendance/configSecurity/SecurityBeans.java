@@ -18,6 +18,8 @@ public class SecurityBeans {
                 .formLogin(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
+                                .requestMatchers("/schedule/**")
+                                .permitAll()
                                 .requestMatchers("/error")
                                 .permitAll()
                                 .requestMatchers("/static/**")
@@ -28,13 +30,11 @@ public class SecurityBeans {
                                 .hasRole("MONITOR")
                                 .requestMatchers("/app/teacher/**")
                                 .hasRole("TEACHER")
-//                                .requestMatchers("/app/report/**")
-//                                .hasRole("TEACHER")
+                                .requestMatchers("/app/report/**")
+                                .hasRole("TEACHER")
                                 .requestMatchers("/app/admin/**")
                                 .hasRole("ADMIN"))
                 .httpBasic(Customizer.withDefaults())
-//                .sessionManagement(sessionManagement -> sessionManagement
-//                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .build();
     }
 

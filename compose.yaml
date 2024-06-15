@@ -1,11 +1,23 @@
 services:
-  postgres:
-    image: 'huecker.io/library/postgres:latest'
-    environment:
-      - 'POSTGRES_DB=attendance'
-      - 'POSTGRES_USER=admin'
-      - 'POSTGRES_PASSWORD=pass_admin'
-    ports:
-      - '5435:5432'
-    volumes:
-      - './postgres_data:/var/lib/postgresql/data'
+#  postgres:
+#    image: 'huecker.io/library/postgres:latest'
+#    environment:
+#      - 'POSTGRES_DB=attendance'
+#      - 'POSTGRES_USER=admin'
+#      - 'POSTGRES_PASSWORD=pass_admin'
+#    ports:
+#      - '5435:5432'
+#    volumes:
+#      - './postgres_data:/var/lib/postgresql/data'
+
+
+    postgres2:
+      image: 'postgres:latest'
+      environment:
+        - 'POSTGRES_DB=attendance2'
+        - 'POSTGRES_USER=admin2'
+        - 'POSTGRES_PASSWORD=pass_admin2'
+      ports:
+        - '5436:5432'
+      volumes:
+        - './postgres_data2:/var/lib/postgresql/data'

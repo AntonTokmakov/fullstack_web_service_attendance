@@ -39,11 +39,14 @@ public class TeacherController {
 
     @PreAuthorize("hasAuthority('TEACHER')")
     @GetMapping("/groups")
-    public String getGroups(Principal principal,
+    public String getGroups(@PathVariable(value = "date", required = false) LocalDate date,
+                            Principal principal,
                             Model model) {
 
         List<CheckActualLesson> checkActualLessons = new ArrayList<>();
-        LocalDate date = LocalDate.of(2024, 4, 9); // todo LocalDate.now();
+        if (date == null) {
+            date = LocalDate.now();
+        }
 
         try {
             List<ActualLesson> lessonList = teacherService.findActualLessonByDateAndTeacher(date, principal.getName());
