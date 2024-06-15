@@ -35,8 +35,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+import java.time.format.TextStyle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -120,4 +121,56 @@ public class ReportController {
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
                 .body(new InputStreamResource(in));
     }
+
+
+    @GetMapping("/semester-attendance")
+    public String getSemesterAttendanceReport(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                              @RequestParam(required = false) Long studyGroupId,
+                                              Principal principal,
+                                              Model model) {
+        studyGroupByUserName = reportService.getStudyGroupIdByUserName(principal.getName());
+
+        if (startDate == null) {
+            startDate = LocalDate.now().minusMonths(6).plusDays(1);
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now();
+        }
+        if (studyGroupId == null) {
+            studyGroupId = studyGroupByUserName.getId();
+        }
+
+        List<Object[]> report = reportService.getSemesterAttendanceReport(startDate, endDate, studyGroupId);
+
+        Map<String, Map<Integer, int[]>> reportData = new LinkedHashMap<>();
+        for (Object[] row : report) {
+            String student = row[0] + " " + row[1] + " " + row[2];
+            Integer month = ((Number) row[5]).intValue();
+            if (!reportData.containsKey(student)) {
+                reportData.put(student, new LinkedHashMap<>());
+            }
+            reportData.get(student).put(month, new int[]{((Number) row[5]).intValue(), ((Number) row[6]).intValue()});
+        }
+
+        model.addAttribute("reportData", reportData);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("months", getMonthsBetweenDates(startDate, endDate));
+
+        return "semesterAttendanceReport";
+    }
+
+    private List<LocalDate> getMonthsBetweenDates(LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> months = new ArrayList<>();
+        LocalDate current = startDate.withDayOfMonth(1);
+        while (!current.isAfter(endDate.withDayOfMonth(1))) {
+            months.add(current);
+            current = current.plusMonths(1);
+        }
+        return months;
+    }
+
+
+
 }

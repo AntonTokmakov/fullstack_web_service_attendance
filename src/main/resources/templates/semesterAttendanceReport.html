@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по посещаемости за семестр</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .table thead th {
+            background-color: #007bff;
+            color: white;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Отчет по посещаемости за семестр</h2>
+    <div>
+        <p>Дата начала: <span th:text="${startDate}"></span></p>
+        <p>Дата окончания: <span th:text="${endDate}"></span></p>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th rowspan="2">ФИО</th>
+            <th th:each="month : ${months}" colspan="2" th:text="${#temporals.format(month, 'MMMM yyyy')}"></th>
+        </tr>
+        <tr>
+            <th th:each="month : ${months}">Общее количество пропусков</th>
+            <th th:each="month : ${months}">Пропуски по уважительной причине</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="studentStat : ${reportData.entrySet()}">
+            <td th:text="${studentStat.key}"></td>
+            <td th:each="month : ${months}">
+                <span th:text="${studentStat.value.containsKey(month.getMonthValue()) ? studentStat.value.get(month.getMonthValue())[0] : 0}">0</span>
+            </td>
+            <td th:each="month : ${months}">
+                <span th:text="${studentStat.value.containsKey(month.getMonthValue()) ? studentStat.value.get(month.getMonthValue())[1] : 0}">0</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

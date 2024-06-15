@@ -74,4 +74,66 @@ public interface PassRepository extends JpaRepository<Pass, Long> {
                                     @Param("endDate") LocalDate endDate,
                                     @Param("studyGroupId") Long studyGroupId);
 
+    @Query(value = """
+        WITH series AS (
+            SELECT generate_series(
+                DATE_TRUNC('month', CAST(:startDate AS DATE)),
+                DATE_TRUNC('month', CAST(:endDate AS DATE)),
+                INTERVAL '1 month'
+            ) AS month
+        ),
+        attendance AS (
+            SELECT
+                s.student_id,
+                s.last_name,
+                s.first_name,
+                s.otchestvo,
+                EXTRACT(YEAR FROM al.date) AS year,
+                EXTRACT(MONTH FROM al.date) AS month,
+                COALESCE(COUNT(p.id), 0) AS total_missed_lessons,
+                COALESCE(SUM(CASE WHEN sp.status_pass_id = 1 THEN 1 ELSE 0 END), 0) AS respect_missed_status
+            FROM
+                student s
+            LEFT JOIN
+                pass p ON p.student_id = s.student_id
+            LEFT JOIN
+                actual_lesson al ON p.actual_lesson_id = al.actual_lesson_id
+                AND al.date BETWEEN :startDate AND :endDate
+            LEFT JOIN
+                status_pass sp ON p.status_pass_id = sp.status_pass_id
+            WHERE
+                s.study_group_id = :studyGroupId
+            GROUP BY
+                s.student_id, s.last_name, s.first_name, s.otchestvo, year, month
+        )
+        SELECT
+            s.last_name,
+            s.first_name,
+            s.otchestvo,
+            EXTRACT(YEAR FROM ser.month) AS year,
+            EXTRACT(MONTH FROM ser.month) AS month,
+            COALESCE(a.total_missed_lessons, 0) AS total_missed_lessons,
+            COALESCE(a.respect_missed_status, 0) AS respect_missed_status
+        FROM
+            series ser
+        CROSS JOIN
+            student s
+        LEFT JOIN
+            attendance a ON a.student_id = s.student_id
+            AND EXTRACT(YEAR FROM ser.month) = a.year
+            AND EXTRACT(MONTH FROM ser.month) = a.month
+        WHERE
+            s.study_group_id = :studyGroupId
+        ORDER BY
+            s.last_name, year, month;
+    """, nativeQuery = true)
+    List<Object[]> reportAttendanceByMonth(@Param("startDate") LocalDate startDate,
+                                           @Param("endDate") LocalDate endDate,
+                                           @Param("studyGroupId") Long studyGroupId);
+
+
+
+
+
+
 }

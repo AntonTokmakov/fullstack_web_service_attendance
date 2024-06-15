@@ -39,6 +39,11 @@ public class ReportService {
         return passRepository.reportAttendance(startDate, endDate, studyGroupId);
     }
 
+    public List<Object[]> getSemesterAttendanceReport(LocalDate startDate, LocalDate endDate, Long studyGroupId) {
+        return passRepository.reportAttendanceByMonth(startDate, endDate, studyGroupId);
+    }
+
+
     public StudyGroup getStudyGroupIdByUserName(String username) {
         return webUserRepository.findByUsername(username).orElse(null).getStudyGroup();
     }

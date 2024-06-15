@@ -15,9 +15,13 @@ public class SecurityBeans {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .successHandler(new CustomAuthenticationSuccessHandler()) // Add this line
+                )
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
+                                .requestMatchers("/login").permitAll()
                                 .requestMatchers("/schedule/**")
                                 .permitAll()
                                 .requestMatchers("/error")
