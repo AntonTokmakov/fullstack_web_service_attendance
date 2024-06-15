@@ -37,10 +37,10 @@
         <tr th:each="studentStat : ${reportData.entrySet()}">
             <td th:text="${studentStat.key}"></td>
             <td th:each="month : ${months}">
-                <span th:text="${studentStat.value.containsKey(month.getMonthValue()) ? studentStat.value.get(month.getMonthValue())[0] : 0}">0</span>
+                <span th:text="${studentStat.value.containsKey(month.year * 100 + month.monthValue) ? studentStat.value.get(month.year * 100 + month.monthValue)[0] : 0}">0</span>
             </td>
             <td th:each="month : ${months}">
-                <span th:text="${studentStat.value.containsKey(month.getMonthValue()) ? studentStat.value.get(month.getMonthValue())[1] : 0}">0</span>
+                <span th:text="${studentStat.value.containsKey(month.year * 100 + month.monthValue) ? studentStat.value.get(month.year * 100 + month.monthValue)[1] : 0}">0</span>
             </td>
         </tr>
         </tbody>

@@ -124,11 +124,13 @@ public class ReportController {
 
 
     @GetMapping("/semester-attendance")
-    public String getSemesterAttendanceReport(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-                                              @RequestParam(required = false) Long studyGroupId,
-                                              Principal principal,
-                                              Model model) {
+    public String getSemesterAttendanceReport(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Long studyGroupId,
+            Principal principal,
+            Model model) {
+
         studyGroupByUserName = reportService.getStudyGroupIdByUserName(principal.getName());
 
         if (startDate == null) {
@@ -146,11 +148,13 @@ public class ReportController {
         Map<String, Map<Integer, int[]>> reportData = new LinkedHashMap<>();
         for (Object[] row : report) {
             String student = row[0] + " " + row[1] + " " + row[2];
-            Integer month = ((Number) row[5]).intValue();
-            if (!reportData.containsKey(student)) {
-                reportData.put(student, new LinkedHashMap<>());
-            }
-            reportData.get(student).put(month, new int[]{((Number) row[5]).intValue(), ((Number) row[6]).intValue()});
+            int year = ((Number) row[3]).intValue();
+            int month = ((Number) row[4]).intValue();
+            int totalMissedLessons = ((Number) row[5]).intValue();
+            int respectMissedStatus = ((Number) row[6]).intValue();
+
+            reportData.putIfAbsent(student, new LinkedHashMap<>());
+            reportData.get(student).put(year * 100 + month, new int[]{totalMissedLessons, respectMissedStatus});
         }
 
         model.addAttribute("reportData", reportData);
