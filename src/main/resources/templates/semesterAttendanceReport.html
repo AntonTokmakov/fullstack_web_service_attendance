@@ -126,6 +126,15 @@
             gap: 15px;
             margin-bottom: 20px;
         }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .totals {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -157,30 +166,33 @@
 </div>
 <div class="content" id="main-content">
     <h2>Отчет по посещаемости за семестр</h2>
-    <form method="get" action="/app/report/semester">
+    <form method="get" action="/app/report/semester-attendance">
         <div class="date-picker">
             <div class="form-group">
                 <label for="startDate">Дата начала</label>
-                <input type="date" class="form-control" id="startDate" name="startDate" th:value="${#temporals.format(startDate, 'yyyy-MM-dd')}" required>
+                <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}" required>
             </div>
             <div class="form-group">
                 <label for="endDate">Дата окончания</label>
-                <input type="date" class="form-control" id="endDate" name="endDate" th:value="${#temporals.format(endDate, 'yyyy-MM-dd')}" required>
+                <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}" required>
             </div>
-            <button type="submit" class="btn btn-primary align-self-end">Показать отчет</button>
+
         </div>
+        <button type="submit" class="btn btn-primary align-self-end">Показать отчет</button>
     </form>
-    <div class="date-info" th:if="${startDate} and ${endDate}">
-        <p>Дата начала: <span th:text="${startDate}"></span></p>
-        <p>Дата окончания: <span th:text="${endDate}"></span></p>
+    <div class="totals">
         <p>Группа: <span th:text="${groupName}"></span></p>
         <p>Староста: <span th:text="${monitor}"></span></p>
+        <div class="action-buttons">
+            <a class="btn btn-success" style="width: fit-content;" th:href="@{/app/report/semester-attendance/download(startDate=${startDate}, endDate=${endDate}, studyGroupId=${studyGroupId})}">Скачать отчет</a>
+        </div>
     </div>
     <table class="table table-bordered table-responsive">
         <thead>
         <tr>
             <th rowspan="2">ФИО</th>
             <th th:each="month : ${months}" colspan="2" th:text="${#temporals.format(month, 'MMMM yyyy')}"></th>
+            <th rowspan="2">Итого пропусков</th>
         </tr>
         <tr>
             <th th:each="month : ${months}">Общее количество пропусков</th>
@@ -198,6 +210,18 @@
                         </td>
                         <td>
                             <span th:text="${studentStat.value.containsKey(month.year * 100 + month.monthValue) ? studentStat.value.get(month.year * 100 + month.monthValue)[1] : 0}">0</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table class="nested-table">
+                    <tr>
+                        <td>
+                            <span th:text="${totalAttendance.containsKey(studentStat.key) ? totalAttendance.get(studentStat.key)[0] : 0}">0</span>
+                        </td>
+                        <td>
+                            <span th:text="${totalAttendance.containsKey(studentStat.key) ? totalAttendance.get(studentStat.key)[1] : 0}">0</span>
                         </td>
                     </tr>
                 </table>
