@@ -45,7 +45,7 @@ public class ReportController {
     private final ReportService reportService;
     private StudyGroup studyGroupByUserName;
 
-    @GetMapping
+    @GetMapping()
     public String getListReport() {
         return "report";
     }

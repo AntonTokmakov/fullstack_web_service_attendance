@@ -192,4 +192,11 @@ public class ReportService {
     }
 
 
+    public List<StudyGroup> getStudyGroups() {
+        return studyGroupRepository.findAll();
+    }
+
+    public StudyGroup getStudyGroup(Long studyGroupId) {
+        return studyGroupRepository.findById(studyGroupId).orElse(null);
+    }
 }

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет по посещаемости за семестр</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            background-color: #fff;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 220px;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar .nav-link {
+            color: #333;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .sidebar .nav-link img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        .sidebar .nav-link.active {
+            color: #007bff;
+            background-color: #e9f5ff;
+        }
+        .sidebar .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: auto;
+        }
+        .sidebar .logout-btn:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .content.collapsed {
+            margin-left: 40px;
+        }
+        .table thead th {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        .table tbody td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table tbody td span {
+            display: inline-block;
+            width: 100%;
+            font-weight: normal;
+        }
+        .table th[rowspan="2"] {
+            vertical-align: middle !important;
+        }
+        .nested-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .nested-table td {
+            border: none;
+            padding: 0;
+            text-align: center;
+        }
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .date-picker {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .totals {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+<div class="sidebar" id="sidebar">
+    <div>
+        <div class="text-center mb-4">
+            <img src="/static/images/logoSibGIU.svg" alt="Logo" style="width: 80%;">
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/app/teacher/groups">
+                    <img src="/static/images/houseListLessons.svg" alt="Icon"> Список групп
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/app/teacher/report">
+                    <img src="/static/images/otchet.svg" alt="Icon"> Отчеты
+                </a>
+            </li>
+        </ul>
+    </div>
+    <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
+</div>
+<div class="content" id="main-content">
+    <h2>Отчет по посещаемости за семестр</h2>
+    <form method="get" action="/app/teacher/semester-attendance">
+        <div class="date-picker">
+            <div class="form-group">
+                <label for="startDate">Дата начала</label>
+                <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}" required>
+            </div>
+            <div class="form-group">
+                <label for="endDate">Дата окончания</label>
+                <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}" required>
+            </div>
+            <div class="form-group">
+                <label for="studyGroupId">Группа</label>
+                <select class="form-control" id="studyGroupId" name="studyGroupId" required>
+                    <option th:each="group : ${studyGroups}" th:value="${group.id}" th:text="${group.shortName}"></option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary align-self-end">Показать отчет</button>
+    </form>
+    <div class="totals">
+        <p>Группа: <span th:text="${groupName}"></span></p>
+        <p>Староста: <span th:text="${monitor}"></span></p>
+        <div class="action-buttons">
+            <a class="btn btn-success" style="width: fit-content;" th:href="@{/app/teacher/semester-attendance/download(startDate=${startDate}, endDate=${endDate}, studyGroupId=${studyGroupId})}">Скачать отчет</a>
+        </div>
+    </div>
+    <table class="table table-bordered table-responsive">
+        <thead>
+        <tr>
+            <th rowspan="2">ФИО</th>
+            <th th:each="month : ${months}" colspan="2" th:text="${#temporals.format(month, 'MMMM yyyy')}"></th>
+            <th rowspan="2">Итого пропусков</th>
+        </tr>
+        <tr>
+            <th th:each="month : ${months}">Общее количество пропусков</th>
+            <th th:each="month : ${months}">Пропуски по уважительной причине</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="studentStat : ${reportData.entrySet()}">
+            <td th:text="${studentStat.key}"></td>
+            <td th:each="month : ${months}" colspan="2">
+                <table class="nested-table">
+                    <tr>
+                        <td>
+                            <span th:text="${studentStat.value.containsKey(month.year * 100 + month.monthValue) ? studentStat.value.get(month.year * 100 + month.monthValue)[0] : 0}">0</span>
+                        </td>
+                        <td>
+                            <span th:text="${studentStat.value.containsKey(month.year * 100 + month.monthValue) ? studentStat.value.get(month.year * 100 + month.monthValue)[1] : 0}">0</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table class="nested-table">
+                    <tr>
+                        <td>
+                            <span th:text="${totalAttendance.containsKey(studentStat.key) ? totalAttendance.get(studentStat.key)[0] : 0}">0</span>
+                        </td>
+                        <td>
+                            <span th:text="${totalAttendance.containsKey(studentStat.key) ? totalAttendance.get(studentStat.key)[1] : 0}">0</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+        document.getElementById('main-content').classList.toggle('collapsed');
+    }
+</script>
+</body>
+</html>

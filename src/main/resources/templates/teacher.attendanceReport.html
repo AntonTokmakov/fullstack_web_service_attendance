@@ -108,27 +108,21 @@
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="/app/monitor/lessons">
+                    <a class="nav-link" href="/app/teacher/groups">
                         <img src="/static/images/houseListLessons.svg" alt="Icon"> Список пар
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="/app/report/attendance">
+                    <a class="nav-link active" href="/app/teacher/report">
                         <img src="/static/images/otchet.svg" alt="Icon"> Отчет
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/app/monitor/documents">
-                        <img src="/static/images/document.svg" alt="Icon"> Справки
-                    </a>
-                </li>
             </ul>
             <button class="logout-btn" onclick="window.location.href='/logout'">Выйти</button>
         </nav>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content-wrapper" id="main-content">
             <div class="content">
                 <h2>Отчет по посещаемости</h2>
-                <form method="get" action="/app/report/attendance">
+                <form method="get" action="/app/teacher/attendance">
                     <div class="form-group">
                         <label for="startDate">Дата начала</label>
                         <input type="date" class="form-control" id="startDate" name="startDate" th:value="${startDate}">
@@ -136,6 +130,12 @@
                     <div class="form-group">
                         <label for="endDate">Дата окончания</label>
                         <input type="date" class="form-control" id="endDate" name="endDate" th:value="${endDate}">
+                    </div>
+                    <div class="form-group">
+                        <label for="studyGroupId">Группа</label>
+                        <select class="form-control" id="studyGroupId" name="studyGroupId" required>
+                            <option th:each="group : ${studyGroups}" th:value="${group.id}" th:text="${group.shortName}"></option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Показать отчет</button>
                 </form>
@@ -146,7 +146,7 @@
                         <h4>Кол-во пар: <span th:text="${totalLessons}"></span></h4>
                         <h4>Староста: <span th:text="${monitor}"></span></h4>
                     </div>
-                    <a th:href="@{/app/report/attendance/download(startDate=${startDate}, endDate=${endDate}, studyGroupId=${studyGroupId})}" class="btn btn-success mb-3">Скачать отчет</a>
+                    <a th:href="@{/app/teacher/attendance/download(startDate=${startDate}, endDate=${endDate}, studyGroupId=${studyGroupId})}" class="btn btn-success mb-3">Скачать отчет</a>
 
                     <table class="table table-bordered">
                         <thead>

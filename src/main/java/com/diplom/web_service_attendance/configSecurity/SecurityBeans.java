@@ -17,27 +17,21 @@ public class SecurityBeans {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .successHandler(new CustomAuthenticationSuccessHandler()) // Add this line
+                        .successHandler(new CustomAuthenticationSuccessHandler())
                 )
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
                                 .requestMatchers("/login").permitAll()
-                                .requestMatchers("/schedule/**")
-                                .permitAll()
-                                .requestMatchers("/error")
-                                .permitAll()
-                                .requestMatchers("/static/**")
-                                .permitAll()
-                                .requestMatchers("/app/monitor/**")
-                                .hasRole("MONITOR")
-                                .requestMatchers("/app/report/**")
-                                .hasRole("MONITOR")
-                                .requestMatchers("/app/teacher/**")
-                                .hasRole("TEACHER")
-                                .requestMatchers("/app/report/**")
-                                .hasRole("TEACHER")
-                                .requestMatchers("/app/admin/**")
-                                .hasRole("ADMIN"))
+                                .requestMatchers("/schedule/**").permitAll()
+                                .requestMatchers("/error").permitAll()
+                                .requestMatchers("/static/**").permitAll()
+
+                                .requestMatchers("/app/report/**").hasRole("MONITOR")
+                                .requestMatchers("/app/report/**").hasRole("TEACHER")
+                                .requestMatchers("/app/monitor/**").hasRole("MONITOR")
+                                .requestMatchers("/app/teacher/**").hasRole("TEACHER")
+                                .requestMatchers("/app/admin/**").hasRole("ADMIN")
+                )
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
