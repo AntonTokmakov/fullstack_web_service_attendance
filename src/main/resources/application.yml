@@ -17,16 +17,9 @@ spring:
 #    username: admin2
 #    password: pass_admin2
 
-  #3
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://ep-wild-dew-a2b41y8w-pooler.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require
-    username: default
-    password: Ky6pc1uYFlMg
-
   mvc:
     static-path-pattern: /static/**
 
 
 server:
-  port: 80
+  port: 8085

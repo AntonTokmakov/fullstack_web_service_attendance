@@ -1,4 +1,4 @@
-#services:
+services:
 #  postgres:
 #    image: 'huecker.io/library/postgres:latest'
 #    environment:
@@ -11,17 +11,13 @@
 #      - './postgres_data:/var/lib/postgresql/data'
 
 
-#    postgres2:
-#      image: 'postgres:latest'
-#      environment:
-#        - 'POSTGRES_DB=attendance2'
-#        - 'POSTGRES_USER=admin2'
-#        - 'POSTGRES_PASSWORD=pass_admin2'
-#      ports:
-#        - '5436:5432'
-#      volumes:
-#        - './postgres_data2:/var/lib/postgresql/data'
-
-    # pass:  postgres_attendance
-    #  id git hub: postgres
-    #   attendance
+    postgres2:
+      image: 'postgres:latest'
+      environment:
+        - 'POSTGRES_DB=attendance2'
+        - 'POSTGRES_USER=admin2'
+        - 'POSTGRES_PASSWORD=pass_admin2'
+      ports:
+        - '5436:5432'
+      volumes:
+        - './postgres_data2:/var/lib/postgresql/data'
