@@ -1,15 +1,9 @@
----
 meta:
-  environment: jvm
+  environment: docker
   toolchain:
-    name: maven
-    version: 17
+    name: docker
 build:
-  artifacts:
-    target/*.jar: /
-  image: maven:3.8.5-jdk-11
+  dockerfile: Dockerfile
 run:
-  jarName: web_service_attendance-0.0.1-SNAPSHOT.jar
   persistenceMount: /data
-  containerPort: 8085
-  image: java -jar /target/web_service_attendance-0.0.1-SNAPSHOT.jar
+  containerPort: 80
